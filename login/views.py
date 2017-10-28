@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render,HttpResponse
+from django.shortcuts import render
 
 # Create your views here.
+#业务逻辑代码
 
 def login(request):
-    return HttpResponse('''
-     <html>
-            <head>
-		Murong
-            </head>
-            <body>
-                <form action"/login" method="post">
-                    username:<input name="username" type="text" /><br>
-                    password:<input name="password" type="password" /><br>
-                    <input type="submit" value="Login" /><br>
-                </form>
-            </body>
-        </html>'''
-        )
+    # with open('templates/login.html','r') as f:
+    #     html=f.read()
+    # return HttpResponse(html)
+    #相当于：
+    return render(request,'login.html')
