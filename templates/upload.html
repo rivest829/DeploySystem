@@ -15,16 +15,10 @@
 <body style="margin: 0">
 <div style="height: 48px;background-color: aquamarine">沐融部署工具</div>
 <div>
-    <form action="/login/" method="post">
+    <form action="/upload/" method="post">
         <p>
-            <label for="username">用户名：</label>
-            <input id="username" name="user" type="text" placeholder="用户名"/>
-        </p>
-        <p>
-            <label for="password">密码：</label>
-            <input id="password" name="pwd" type="password" placeholder="密码"/>
-            <input type="submit" value="提交"/>
-            <span style="color: red">{{ error_msg }}</span>
+            <label for="upload">upload：</label>
+            <input id="upload" name="upload" type="text"/>
         </p>
     </form>
 </div>
