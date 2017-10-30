@@ -15,11 +15,36 @@
 <body style="margin: 0">
 <div style="height: 48px;background-color: aquamarine">沐融部署工具</div>
 <div>
-    <form action="/upload/" method="post">
-        <p>
-            <label for="upload">upload：</label>
-            <input id="upload" name="upload" type="text"/>
-        </p>
+    <form action="/upload/" method="post" enctype="multipart/form-data">
+<br><br><br><br>
+        目标：
+        <select name="server">
+            <option value=""></option>
+            <option value="bpdcap">bpdcap</option>
+            <option value="bpdmbs">bpdmbs</option>
+            <option value="bpdposp">bpdposp</option>
+            <option value="cgdgw">cgdgw</option>
+            <option value="cgdpom">cgdpom</option>
+            <option value="cgdweb">cgdweb</option>
+            <option value="cgdifc">cgdifc</option>
+            <option value="csdacm">csdacm</option>
+            <option value="csdact">csdact</option>
+            <option value="csdbpg">csdbpg</option>
+            <option value="csdmkm">csdmkm</option>
+            <option value="gsdadt">gsdadt</option>
+            <option value="gsdpay">gsdpay</option>
+            <option value="gsdpsm">gsdpsm</option>
+            <option value="bsdbat">bsdbat</option>
+            <option value="bsdbui">bsdbui</option>
+            <option value="bsdrpt">bsdrpt</option>
+            <br><br><br><br>
+            选择要部署的包：
+            <input type="file" name="data"/><br><br><br><br>
+            执行人：
+            <input name="operator" type="text"/>
+            （请使用姓名全拼）<br><br><br><br>
+            <input type="submit" value="Upload" name="upload"/><br>
+            点击"Upload"后，包中文件将直接覆盖到目标服务器，请谨慎检查包中文件！
     </form>
 </div>
 </body>
