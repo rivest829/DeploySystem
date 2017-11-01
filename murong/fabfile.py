@@ -34,7 +34,7 @@ env.roledefs = {
 def define(value):
     package = value
     command = value
-    global package, command
+    global package, command, server
 
 
 @roles()

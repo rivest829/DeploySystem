@@ -15,7 +15,8 @@
 <body style="margin: 0">
 <div style="height: 48px;background-color: aquamarine">沐融部署工具</div>
 <div>
-    <form action="/upload/" method="post" enctype="multipart/form-data">
+    <form action="/upload/" method="post" enctype="multipart/form-data" >
+        {% csrf_token %}
 <br><br><br><br>
         目标：
         <select name="server">

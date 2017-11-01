@@ -7,7 +7,8 @@
 <body>
 <div style="height: 48px;background-color: aquamarine">沐融部署工具</div>
 <div>
-    <form action="/execute/" method="post">
+    <form action="/execute/" method="post" >
+        {% csrf_token %}
 <br><br><br>
         目标：
         <select name="server">

@@ -15,7 +15,8 @@
 <body style="margin: 0">
 <div style="height: 48px;background-color: aquamarine">沐融部署工具</div>
 <div>
-    <form action="/murong/" method="post">
+    <form action="/murong/" method="post" >
+        {% csrf_token %}
         <p>
             <label for="username">用户名：</label>
             <input id="username" name="user" type="text" placeholder="用户名"/>
