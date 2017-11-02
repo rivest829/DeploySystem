@@ -7,5 +7,5 @@ from django.db import models
 # Create your models here.
 class UserInfo(models.Model):
     username=models.CharField(max_length=32)
-    #password=models.CharField(max_length=32)
-    package=models.FileField(upload_to='./upload')
+    password=models.CharField(max_length=32)
+    Permissions=models.TextField(max_length=32)

@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.shortcuts import render, HttpResponse
 import os, time
-
+from murong import models
 
 # Create your views here.
 # 业务逻辑代码
@@ -13,7 +13,7 @@ def login(request):
     if request.method == 'POST':
         user = request.POST.get('user', None)
         pwd = request.POST.get('pwd', None)
-        if user == 'rivest829' and pwd == 'jiang123':
+        if models.UserInfo.objects.get(username=user).password==pwd:
             return render(request, 'deploy.html')
         else:
             error_msg = '用户名密码错误'
