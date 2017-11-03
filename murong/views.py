@@ -11,20 +11,20 @@ from murong import models
 
 def login(request):
     error_msg = ''
-    pwd_in_db = 'fNv2MmUkSF05TAa4xhmVF26rJk3obniEIoKAUEZ5nMNGkmqy8'
     user = request.POST.get('user', None)
+    pwd_in_db = 'fNv2MmUkSF05TAa4xhmVF26rJk3obniEIoKAUEZ5nMNGkmqy8'
+    user=request.POST.get('user', None)
+    global user
     pwd = request.POST.get('pwd', None)
     if request.method == 'POST':
         if user == '':
             error_msg = '用户名为空'
         else:
-
             try:
                 pwd_in_db=models.UserInfo.objects.filter(username=user).get().password
             except:
                 error_msg = '用户不存在'
                 return render(request, 'login.html', {'error_msg': error_msg})
-
             if pwd_in_db == pwd:
                 return render(request, 'deploy.html')
             else:
@@ -44,7 +44,6 @@ def deploy(request):
 def upload(request):
     pack = request.FILES.get('data')
     servername = request.POST.get('server')
-    operator = request.POST.get('operator')
     save_path = os.path.join('pack', pack.name)
     package = open(save_path, mode="wb")
     for item in pack.chunks():
@@ -55,7 +54,7 @@ def upload(request):
     uouter = do_upload.read()
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
-        f.write(uouter + 'operator:' + operator)
+        f.write(uouter + 'operator:' + user)
     return HttpResponse('''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,7 +63,7 @@ def upload(request):
 <body>
 <form>
     '''
-                        + uouter.replace('[', '<br>[') + '<br><br>执行人：' + operator +
+                        + uouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
                         '''
                         </form>
                         </body>
@@ -74,14 +73,13 @@ def upload(request):
 
 def execute(request):
     servername = request.POST.get('server')
-    operator = request.POST.get('operator')
     command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
     do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
     do_execute = os.popen(do_fab)
     eouter = do_execute.read()
     log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
-        f.write(eouter + '**************operator:' + operator)
+        f.write(eouter + '**************operator:' + user)
     return HttpResponse('''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -90,7 +88,7 @@ def execute(request):
 <body>
 <form>
     '''
-                        + eouter.replace('[', '<br>[') + '<br><br>执行人：' + operator +
+                        + eouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
                         '''
                         </form>
                         </body>
