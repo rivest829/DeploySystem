@@ -11,12 +11,12 @@ from murong import models
 
 def login(request):
     error_msg = ''
-    user = request.POST.get('user', None)
-    pwd_in_db = 'fNv2MmUkSF05TAa4xhmVF26rJk3obniEIoKAUEZ5nMNGkmqy8'
+    pwd = 'fNv2MmUkSF05TAa4xhmVF26rJk3obniEIoKAUEZ5nMNGkmqy8'
     user=request.POST.get('user', None)
-    global user
     pwd = request.POST.get('pwd', None)
     if request.method == 'POST':
+        allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split( ' ')
+        global allow_server, user
         if user == '':
             error_msg = '用户名为空'
         else:
@@ -31,15 +31,13 @@ def login(request):
                 error_msg = '用户名密码错误'
     return render(request, 'login.html', {'error_msg': error_msg})
 
-
 def deploy(request):
     if request.method == 'POST':
         if (request.POST.get('upload', None)) == '部署':
-            return render(request, 'upload.html')
+            return render(request, 'upload.html',{'permissions':allow_server})
     if request.method == 'POST':
         if (request.POST.get('execute', None)) == '重启服务':
-            return render(request, 'execute.html')
-
+            return render(request, 'execute.html',{'permissions':allow_server})
 
 def upload(request):
     pack = request.FILES.get('data')
@@ -54,7 +52,7 @@ def upload(request):
     uouter = do_upload.read()
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
-        f.write(uouter + 'operator:' + user)
+        f.write(uouter + '**************operator:' + user)
     return HttpResponse('''<!DOCTYPE html>
 <html lang="en">
 <head>

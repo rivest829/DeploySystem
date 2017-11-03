@@ -7,29 +7,16 @@
 <body>
 <div style="height: 48px;background-color: aquamarine">沐融部署工具</div>
 <div>
-    <form action="/execute/" method="post" >
+    <form action="/execute/" method="post">
         {% csrf_token %}
-<br><br><br>
+        <br><br><br>
         目标：
         <select name="server">
             <option value=""></option>
-            <option value="bpdcap">bpdcap</option>
-            <option value="bpdmbs">bpdmbs</option>
-            <option value="bpdposp">bpdposp</option>
-            <option value="cgdgw">cgdgw</option>
-            <option value="cgdpom">cgdpom</option>
-            <option value="cgdweb">cgdweb</option>
-            <option value="cgdifc">cgdifc</option>
-            <option value="csdacm">csdacm</option>
-            <option value="csdact">csdact</option>
-            <option value="csdbpg">csdbpg</option>
-            <option value="csdmkm">csdmkm</option>
-            <option value="gsdadt">gsdadt</option>
-            <option value="gsdpay">gsdpay</option>
-            <option value="gsdpsm">gsdpsm</option>
-            <option value="bsdbat">bsdbat</option>
-            <option value="bsdbui">bsdbui</option>
-            <option value="bsdrpt">bsdrpt</option>
+            {% for row in  permissions %}
+                <option value="{{ row }}">{{ row }}</option>
+
+            {% endfor %}
         </select><br><br><br>执行命令：
         ygstart
         <select name="GorS">
