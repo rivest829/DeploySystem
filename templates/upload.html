@@ -16,20 +16,22 @@
 <div style="height: 48px;background-color: aquamarine">沐融部署工具</div>
 <div>
 
-    <form action="/upload/" method="post" enctype="multipart/form-data" >
+    <form action="/upload/" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-<br><br><br><br>
+        <br><br><br><br>
         目标：
         <select name="server">
             <option value=""></option>
-            {% for row in  permissions  %}
-								    <option value="{{ row }}">{{ row }}</option>
-
-							{% endfor %}
+            {% for row in  permissions %}
+                <option value="{{ row }}">{{ row }}</option>
+            {% endfor %}
             <br><br><br><br>
             选择要部署的包：
             <input type="file" name="data"/><br><br><br><br>
-            <input type="submit" value="Upload" name="upload"/><br>
+            <p>
+                <input type="submit" value="Upload" name="upload"/><br>
+                <span style="color: red">{{ error_msg }}</span>
+            </p>
             点击"Upload"后，包中文件将直接覆盖到目标服务器，请谨慎检查包中文件！
     </form>
 </div>

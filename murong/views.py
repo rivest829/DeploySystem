@@ -40,9 +40,12 @@ def deploy(request):
             return render(request, 'execute.html',{'permissions':allow_server})
 
 def upload(request):
+    error_msg='服务器与包名不匹配'
     pack = request.FILES.get('data')
     servername = request.POST.get('server')
     save_path = os.path.join('pack', pack.name)
+    if servername!=pack.name.split('-')[1]:
+        return render(request, 'upload.html', {'error_msg': error_msg,'permissions':allow_server})
     package = open(save_path, mode="wb")
     for item in pack.chunks():
         package.write(item)
