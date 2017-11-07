@@ -6,6 +6,7 @@
 # fab --roles=cgdgw define:value='ps -aux' doExecute
 
 from fabric.api import *
+import zipfile
 
 # Global Args
 pack_dir = './pack/'
@@ -45,6 +46,17 @@ def upload():
 @roles()
 def unzip():
     run('unzip -o ' + package + ' -d ../')
+    flag = zipfile.ZipFile(pack_dir + package)
+    for item in flag.namelist():
+        tag = item.split('.')[0]
+        if tag.endswith('-sit'):
+            with cd('../'):
+                run('mv ' + item + ' ' + item.replace('-sit', ''))
+        elif tag.endswith('-uat'):
+            with cd('../'):
+                run('mv ' + item + ' ' + item.replace('-uat', ''))
+        else:
+            pass
     run('rm -f ' + package)
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import render, HttpResponse
-import os, time
+import os, time, zipfile
 from murong import models
 
 
@@ -12,40 +12,42 @@ from murong import models
 def login(request):
     error_msg = ''
     pwd = 'fNv2MmUkSF05TAa4xhmVF26rJk3obniEIoKAUEZ5nMNGkmqy8'
-    user=request.POST.get('user', None)
+    user = request.POST.get('user', None)
     pwd = request.POST.get('pwd', None)
     if request.method == 'POST':
-        allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split( ' ')
-        global allow_server, user
         if user == '':
             error_msg = '用户名为空'
         else:
             try:
-                pwd_in_db=models.UserInfo.objects.filter(username=user).get().password
+                pwd_in_db = models.UserInfo.objects.filter(username=user).get().password
             except:
                 error_msg = '用户不存在'
                 return render(request, 'login.html', {'error_msg': error_msg})
             if pwd_in_db == pwd:
+                allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
+                global allow_server, user
                 return render(request, 'deploy.html')
             else:
                 error_msg = '用户名密码错误'
     return render(request, 'login.html', {'error_msg': error_msg})
 
+
 def deploy(request):
     if request.method == 'POST':
         if (request.POST.get('upload', None)) == '部署':
-            return render(request, 'upload.html',{'permissions':allow_server})
+            return render(request, 'upload.html', {'permissions': allow_server})
     if request.method == 'POST':
         if (request.POST.get('execute', None)) == '重启服务':
-            return render(request, 'execute.html',{'permissions':allow_server})
+            return render(request, 'execute.html', {'permissions': allow_server})
+
 
 def upload(request):
-    error_msg='服务器与包名不匹配'
+    error_msg = '服务器与包名不匹配'
     pack = request.FILES.get('data')
     servername = request.POST.get('server')
     save_path = os.path.join('pack', pack.name)
-    if servername!=pack.name.split('-')[1]:
-        return render(request, 'upload.html', {'error_msg': error_msg,'permissions':allow_server})
+    if servername != pack.name.split('-')[1]:
+        return render(request, 'upload.html', {'error_msg': error_msg, 'permissions': allow_server})
     package = open(save_path, mode="wb")
     for item in pack.chunks():
         package.write(item)
@@ -55,7 +57,7 @@ def upload(request):
     uouter = do_upload.read()
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
-        f.write(uouter + '**************operator:' + user)
+        f.write(uouter + "**************operator:" + user)
     return HttpResponse('''<!DOCTYPE html>
 <html lang="en">
 <head>

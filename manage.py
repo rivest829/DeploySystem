@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding:utf-8
 import os
 import sys
 print('Admin page URL:172.16.1.169:9528/admin;#####accout:admin #####password:admin@picc')
