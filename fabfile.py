@@ -35,7 +35,8 @@ env.roledefs = {
 def define(value):
     package = value
     command = value
-    global package, command, server
+    global package, command
+
 
 
 @roles()
@@ -65,6 +66,11 @@ def commander():
     run(command)
 
 
+@roles()
+def jboss():
+    run('sh ~/jboss5/bin/start.sh')
+    run('ygstart -a')
+
 def doWork():
     execute(upload)
     execute(unzip)
@@ -73,5 +79,5 @@ def doWork():
 def doExecute():
     execute(commander)
 
-    # cdb
-    # sh start.sh
+def doJboss():
+    execute(jboss)

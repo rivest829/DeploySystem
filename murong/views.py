@@ -54,7 +54,7 @@ def upload(request):
     package.close()
     do_fab = 'fab --roles=%s define:value=%s doWork' % (servername, pack.name)
     do_upload = os.popen(do_fab)
-    uouter = do_upload.read()
+    uouter = do_upload.read().decode('gb18030').encode('utf-8')
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
         f.write(uouter + "**************operator:" + user)
@@ -75,25 +75,49 @@ def upload(request):
 
 
 def execute(request):
-    servername = request.POST.get('server')
-    command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
-    do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
-    do_execute = os.popen(do_fab)
-    eouter = do_execute.read()
-    log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
-    with open(log_path, mode='a') as f:
-        f.write(eouter + '**************operator:' + user)
-    return HttpResponse('''<!DOCTYPE html>
-<html lang="en">
-<head>
-    Murong Execute
-</head>
-<body>
-<form>
-    '''
-                        + eouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                        '''
-                        </form>
-                        </body>
-                        </html>
-                        </html>''')
+    if request.POST.has_key('execute'):
+        servername = request.POST.get('server')
+        command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
+        do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
+        do_execute = os.popen(do_fab)
+        eouter = do_execute.read().decode('gb18030').encode('utf-8')
+        log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
+        with open(log_path, mode='a') as f:
+            f.write(eouter + '**************operator:' + user)
+        return HttpResponse('''<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        Murong Execute
+    </head>
+    <body>
+    <form>
+        '''
+                            + eouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
+                            '''
+                            </form>
+                            </body>
+                            </html>
+                            </html>''')
+
+    elif request.POST.has_key('restartJboss'):
+        servername=request.POST.get('server')
+        do_fab = 'fab --roles=%s doJboss -f fabfile.py' % (servername)
+        do_jboss = os.popen(do_fab)
+        jouter = do_jboss.read().decode('gb18030').encode('utf-8')
+        log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
+        with open(log_path, mode='a') as f:
+            f.write(jouter + '**************operator:' + user)
+        return HttpResponse('''<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        Murong
+    </head>
+    <body>
+    <form>
+        '''
+                            + jouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
+                            '''
+                            </form>
+                            </body>
+                            </html>
+                            </html>''')
