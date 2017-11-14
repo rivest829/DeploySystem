@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render, HttpResponse
-import os, time, zipfile
+from django.shortcuts import render, HttpResponse,render_to_response
+from django.http import HttpResponseRedirect,HttpResponse
+from django.template import RequestContext
+from django.views.decorators.csrf import csrf_exempt
+import os, time
 from murong import models
 
 
 # Create your views here.
 # 业务逻辑代码
 
-
+@csrf_exempt
 def login(request):
     error_msg = ''
     pwd = 'fNv2MmUkSF05TAa4xhmVF26rJk3obniEIoKAUEZ5nMNGkmqy8'
@@ -24,24 +27,30 @@ def login(request):
                 error_msg = '用户不存在'
                 return render(request, 'login.html', {'error_msg': error_msg})
             if pwd_in_db == pwd:
-                allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
-                global allow_server, user
-                return render(request, 'deploy.html')
+                response = render_to_response('deploy.html')
+
+                # 将username写入浏览器cookie,失效时间为3600
+                response.set_cookie('user', user, 3600)
+                return response
             else:
                 error_msg = '用户名密码错误'
     return render(request, 'login.html', {'error_msg': error_msg})
 
-
+@csrf_exempt
 def deploy(request):
+    user=request.COOKIES.get('user','')
+    allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.method == 'POST':
         if (request.POST.get('upload', None)) == '部署':
-            return render(request, 'upload.html', {'permissions': allow_server})
+            return render_to_response('upload.html', {'permissions': allow_server})
     if request.method == 'POST':
         if (request.POST.get('execute', None)) == '重启服务':
-            return render(request, 'execute.html', {'permissions': allow_server})
+            return render_to_response('execute.html', {'permissions': allow_server})
 
-
+@csrf_exempt
 def upload(request):
+    user = request.COOKIES.get('user', '')
+    allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     error_msg = '服务器与包名不匹配'
     pack = request.FILES.get('data')
     servername = request.POST.get('server')
@@ -73,8 +82,9 @@ def upload(request):
                         </html>
                         </html>''')
 
-
+@csrf_exempt
 def execute(request):
+    user = request.COOKIES.get('user', '')
     if request.POST.has_key('execute'):
         servername = request.POST.get('server')
         command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
@@ -92,7 +102,7 @@ def execute(request):
     <body>
     <form>
         '''
-                            + eouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
+                            + eouter.replace('[', '<br>[') + '<br><br>执行人：' +user+
                             '''
                             </form>
                             </body>
@@ -115,7 +125,7 @@ def execute(request):
     <body>
     <form>
         '''
-                            + jouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
+                            + jouter.replace('[', '<br>[') + '<br><br>执行人：' +user+
                             '''
                             </form>
                             </body>
