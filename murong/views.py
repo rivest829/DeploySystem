@@ -76,7 +76,9 @@ def upload(request):
 <form>
     '''
                         + uouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                        '''
+                        '''<p class="text-center text-info">
+				 <em>提示：</em> 显示：rm -f [包名] Done. 即为部署 <strong>成功</strong>  <small></small>
+			</p>
                         </form>
                         </body>
                         </html>
@@ -103,7 +105,9 @@ def execute(request):
     <form>
         '''
                             + eouter.replace('[', '<br>[') + '<br><br>执行人：' +user+
-                            '''
+                            '''<p class="text-center text-info">
+				 <em>提示：</em> 显示out: [服务名] start succeed 即为服务重启 <strong>成功</strong>  <small></small>
+			</p>
                             </form>
                             </body>
                             </html>
@@ -126,7 +130,9 @@ def execute(request):
     <form>
         '''
                             + jouter.replace('[', '<br>[') + '<br><br>执行人：' +user+
-                            '''
+                            '''<p class="text-center text-info">
+				 <em>提示：</em> 显示out: [服务名] start succeed 即为服务重启 <strong>成功</strong>  <small></small>
+			</p>
                             </form>
                             </body>
                             </html>
