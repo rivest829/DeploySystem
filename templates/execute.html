@@ -1,37 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
+
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
 <head>
-    <link rel="stylesheet" href="/static/commons.css" />
     <meta charset="UTF-8">
     <title>沐融部署工具</title>
 </head>
-<body>
-<div style="height: 48px;background-color: #ff564a">沐融部署工具</div>
-<div>
-    <form action="/execute/" method="post">
-        {% csrf_token %}
-        <br><br><br>
-        目标：
-        <select name="server">
-            <option value=""></option>
-            {% for row in  permissions %}
-                <option value="{{ row }}">{{ row }}</option>
-            {% endfor %}
-        </select><br><br><br>执行命令：
-        ygstart
-        <select name="GorS">
-            <option value=""></option>
-            <option value="-s">-s</option>
-            <option value="-g">-g</option>
-        </select>
-        <input name="command" type="text"/>
-        <input type="submit" value="Execute!" name="execute"/><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <br><br><br><br><br><br><br><br><br><br><br><br>
-    <div>
-{#        <input type="submit" value="restartJboss" name="restartJboss"/>#}
-    </div>
+<body background="/static/20171116192242.jpg">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <h3 class="text-center">
+                沐融部署工具
+            </h3>
+        </div>
+        <form action="/execute/" method="post">
 
-    </form>
+            <br><br><br>
+            <br><br>
+        <p style="width: 20%;margin: 0 auto;">
+            <label for="exampleInputFile">目标：</label>
+            <select name="server">
+                <option value=""></option>
+                {% for row in  permissions %}
+                    <option value="{{ row }}">{{ row }}</option>
+                {% endfor %}
+            </select>
+            <br><br><br>
+            <label for="exampleInputFile">执行命令：</label>
+            ygstart
+            <select name="GorS">
+                <option value=""></option>
+                <option value="-s">-s</option>
+                <option value="-g">-g</option>
+            </select>
+        </p>
+        <br>
+            <p style="width: 20%;margin: 0 auto;">
+                <input class="form-control" name="command" type="text" placeholder="服务名" "></input>
+            </p>
+        <br>
+        <p style="width: 20%;margin: 0 auto;">
+            <button type="submit" value="Execute!" name="execute" class="btn btn-default">Execute</button>
+        </p>
+            <div>
+                {#        <input type="submit" value="restartJboss" name="restartJboss"/>#}
+            </div>
+
+        </form>
+
+    <p class="text-center text-info">
+				 <em>提示：</em> 谨慎检查目标服务器 <strong>，避免启错机器</strong>  <small>:-)</small>
+			</p>
+    </div>
 </div>
 </body>
-</html>

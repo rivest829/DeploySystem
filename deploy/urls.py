@@ -18,8 +18,8 @@ from django.contrib import admin
 from murong import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^murong/', views.login,name='murong'),
-    url(r'^deploy/', views.deploy,name='deploy'),
-    url(r'^upload/', views.upload,name='upload'),
-    url(r'^execute/', views.execute,name='execute'),
+    url(r'^murong/', views.login),
+    url(r'^deploy/', views.deploy),
+    url(r'^upload/', views.upload),
+    url(r'^execute/', views.execute),
 ]

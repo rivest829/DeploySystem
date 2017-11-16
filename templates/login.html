@@ -1,33 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
 <head>
-    <link rel="stylesheet" href="/static/commons.css" />
     <meta charset="UTF-8">
     <title>沐融部署工具</title>
-    <style>
-        label {
-            width: 80px;
-            text-align: right;
-            display: inline-block;
-        }
-    </style>
 </head>
+{# Display a form #}
+<body background="/static/20171116192242.jpg">
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<h3 class="text-center">
+				沐融部署工具
+			</h3>
+			<form class="form-horizontal" role="form" method="post">
+				<div class="form-group">
+					 <label for="username" class="col-sm-2 control-label">用户名：</label>
+					<div class="col-sm-10">
+						<input class="form-control" id="username" name="user" type="text" placeholder="用户名" />
+					</div>
+				</div>
+				<div class="form-group">
+					 <label for="inputPassword3" class="col-sm-2 control-label">密码：</label>
+					<div class="col-sm-10">
+						<input class="form-control" id="password" name="pwd" type="password" placeholder="密码" />
+					</div>
+				</div>
+				<div class="form-group" >
+					<div class="col-sm-offset-2 col-sm-10">
+						 <button type="submit" class="btn btn-default">登录</button><span style="color: red">{{ error_msg }}</span>
+					</div>
 
-<div style="height: 48px;background-color: #ff564a">沐融部署工具</div>
-<div>
-    <form action="/murong/" method="post" >
-        {% csrf_token %}
-        <p>
-            <label for="username">用户名：</label>
-            <input id="username" name="user" type="text" placeholder="用户名"/>
-        </p>
-        <p>
-            <label for="password">密码：</label>
-            <input id="password" name="pwd" type="password" placeholder="密码"/>
-            <input type="submit" value="提交"/>
-            <span style="color: red">{{ error_msg }}</span>
-        </p>
-    </form>
+				</div>
+			</form>
+			<p class="text-center text-info">
+				 <em>提示：</em> 使用前请仔细检查包中文件， <strong>严禁擅自修改</strong>  <small></small>
+			</p>
+		</div>
+	</div>
 </div>
 </body>
-</html>
