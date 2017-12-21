@@ -2,7 +2,6 @@
 # encoding:utf-8
 import os
 import sys
-print('Admin page URL:172.16.1.169:9528/admin;#####accout:admin #####password:admin@picc')
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "deploy.settings")
     try:
