@@ -2,8 +2,6 @@
 # encoding:utf-8
 # author:Jiang Xinhan
 # Example:
-# fab --roles=cgdgw define:value='uat-cgdgw-20171020-865.zip' doWork
-# fab --roles=cgdgw define:value='ps -aux' doExecute
 
 from fabric.api import *
 import zipfile
@@ -65,7 +63,9 @@ def unzip():
 def commander():
     run(command)
 
-
+def dellog():
+    run(cd('/home/%s/trc'%command))
+    run('ls -lrht|head -3|awk \'{print $9}\'|xargs rm -rf')
 @roles()
 def jboss():
     run('sh ~/jboss5/bin/start.sh')
@@ -81,3 +81,6 @@ def doExecute():
 
 def doJboss():
     execute(jboss)
+
+def doDellog():
+    execute(dellog)

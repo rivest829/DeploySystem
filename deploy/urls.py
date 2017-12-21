@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^deploy/', views.deploy),
     url(r'^upload/', views.upload),
     url(r'^execute/', views.execute),
+    url(r'^dellog/', views.dellog),
 ]

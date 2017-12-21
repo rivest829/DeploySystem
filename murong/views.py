@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render, HttpResponse,render_to_response
-from django.http import HttpResponseRedirect,HttpResponse
+from django.shortcuts import render, HttpResponse, render_to_response
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 import os, time
@@ -36,9 +36,10 @@ def login(request):
                 error_msg = '用户名密码错误'
     return render(request, 'login.html', {'error_msg': error_msg})
 
+
 @csrf_exempt
 def deploy(request):
-    user=request.COOKIES.get('user','')
+    user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.method == 'POST':
         if (request.POST.get('upload', None)) == '部署':
@@ -46,6 +47,10 @@ def deploy(request):
     if request.method == 'POST':
         if (request.POST.get('execute', None)) == '重启服务':
             return render_to_response('execute.html', {'permissions': allow_server})
+    if request.method == 'POST':
+        if (request.POST.get('dellog', None)) == 'dellog':
+            return render_to_response('dellog.html', {'permissions': allow_server})
+
 
 @csrf_exempt
 def upload(request):
@@ -55,7 +60,7 @@ def upload(request):
     pack = request.FILES.get('data')
     servername = request.POST.get('server')
     save_path = os.path.join('pack', pack.name)
-    if servername != pack.name.split('-')[1]:
+    if servername != pack.name.split('-')[1]:  # 校验包名与服务器名是否匹配
         return render(request, 'upload.html', {'error_msg': error_msg, 'permissions': allow_server})
     package = open(save_path, mode="wb")
     for item in pack.chunks():
@@ -67,7 +72,7 @@ def upload(request):
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
         f.write(uouter + "**************operator:" + user)
-    return HttpResponse('''<!DOCTYPE html>
+    return HttpResponse('''<!DOCTYPE html> 
 <html lang="en">
 <head>
     Murong Execute
@@ -83,6 +88,7 @@ def upload(request):
                         </body>
                         </html>
                         </html>''')
+
 
 @csrf_exempt
 def execute(request):
@@ -104,7 +110,7 @@ def execute(request):
     <body>
     <form>
         '''
-                            + eouter.replace('[', '<br>[') + '<br><br>执行人：' +user+
+                            + eouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
                             '''<p class="text-center text-info">
 				 <em>提示：</em> 显示out: [服务名] start succeed 即为服务重启 <strong>成功</strong>  <small></small>
 			</p>
@@ -114,7 +120,7 @@ def execute(request):
                             </html>''')
 
     elif request.POST.has_key('restartJboss'):
-        servername=request.POST.get('server')
+        servername = request.POST.get('server')
         do_fab = 'fab --roles=%s doJboss -f fabfile.py' % (servername)
         do_jboss = os.popen(do_fab)
         jouter = do_jboss.read().decode('gb18030').encode('utf-8')
@@ -129,7 +135,7 @@ def execute(request):
     <body>
     <form>
         '''
-                            + jouter.replace('[', '<br>[') + '<br><br>执行人：' +user+
+                            + jouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
                             '''<p class="text-center text-info">
 				 <em>提示：</em> 显示out: [服务名] start succeed 即为服务重启 <strong>成功</strong>  <small></small>
 			</p>
@@ -137,3 +143,35 @@ def execute(request):
                             </body>
                             </html>
                             </html>''')
+
+
+@csrf_exempt
+def dellog(request):
+    user = request.COOKIES.get('user', '')
+    if request.POST.has_key('Delete Log!'):
+        allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
+        password = request.POST.get('password')
+        if password == 'dellog':
+            servername = request.POST.get('server')
+            do_fab = 'fab --roles=%s define:value=%s doDellog -f fabfile.py' % (servername, servername)
+            do_dellog = os.popen(do_fab)
+            log_outer = do_dellog.read().decode('gb18030').encode('utf-8')
+            log_path = os.path.join('exeLog', "deleteLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
+            with open(log_path, mode='a') as f:
+                f.write(log_outer + '**************operator:' + user)
+            return HttpResponse('''<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        Murong
+                    </head>
+                    <body>
+                    <form>
+                        '''
+                                + log_outer.replace('[', '<br>[') + '<br><br>执行人：' + user +
+                                ''' </form>
+                                </body>
+                                </html>
+                                </html>''')
+        else:
+            error_msg = '口令错！'
+            return render(request, 'dellog.html', {'error_msg': error_msg, 'permissions': allow_server})
