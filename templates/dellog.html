@@ -21,11 +21,14 @@
             </h3>
             <form action="/dellog/" class="form-horizontal" role="form" method="post">
                 <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">密码：</label>
                     <div class="col-sm-10">
-                        <input class="form-control" id="password" name="password" type="password" placeholder="密码"/>
+                        <p style="width: 20%;margin: 0 auto;">
+                            <label for="exampleInputFile">口令：</label>
+                            <input class="form-control" id="password" name="password" type="password" placeholder="口令"/>
+                        </p>
                     </div>
                 </div>
+                <br>
                 <div class="form-group">
                     <div class="col-sm-10">
                         <p style="width: 20%;margin: 0 auto;">
@@ -37,6 +40,7 @@
                                 {% endfor %}
                             </select>
                         </p>
+                        <br>
                         <p style="width: 20%;margin: 0 auto;">
                             <label for="exampleInputFile">日志日期：</label>
                             <select name="log_date">
@@ -46,6 +50,7 @@
                                 {% endfor %}
                             </select>
                         </p>
+                        <br>
                         <p style="width: 20%;margin: 0 auto;">
                             <button type="submit" value="Delete Log!" name="Delete Log!" class="btn btn-default">Delete
                                 Log!
@@ -60,8 +65,8 @@
                 </div>
             </form>
             <p class="text-center text-info">
-                <em>提示：</em> 删除日志， <strong>，点一次删除两天的日志（从最旧删起），谨慎操作！</strong>
-                <small>口令联系江信瀚获取</small>
+                <em>提示：</em> 隐藏功能——<strong>删除日志，谨慎操作！</strong>
+                <small></small>
             </p>
         </div>
     </div>
