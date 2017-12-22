@@ -40,7 +40,13 @@ def login(request):
 @csrf_exempt
 def deploy(request):
     user = request.COOKIES.get('user', '')
-    date_list=(i for i in range(1,32))
+    date_list = []
+    date_iter = (i for i in range(1, 32))
+    for i in date_iter:
+        if i < 10:
+            date_list.append('0' + str(i))
+        else:
+            date_list.append(i)
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.method == 'POST':
         if (request.POST.get('upload', None)) == '部署':

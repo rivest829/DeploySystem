@@ -68,7 +68,8 @@ def commander():
 @roles()
 def dellog():
     with cd('/home/%s/trc'%command):
-        run('rm -f %s/*'%date)
+        run('ls -lh %s'%date)
+        run('rm -rf %s'%date)
 
 @roles()
 def jboss():
