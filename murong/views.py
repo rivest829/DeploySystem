@@ -40,6 +40,7 @@ def login(request):
 @csrf_exempt
 def deploy(request):
     user = request.COOKIES.get('user', '')
+    date_list=(i for i in range(1,32))
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.method == 'POST':
         if (request.POST.get('upload', None)) == '部署':
@@ -49,7 +50,7 @@ def deploy(request):
             return render_to_response('execute.html', {'permissions': allow_server})
     if request.method == 'POST':
         if (request.POST.get('dellog', None)) == 'dellog':
-            return render_to_response('dellog.html', {'permissions': allow_server})
+            return render_to_response('dellog.html', {'permissions': allow_server,'date_list':date_list})
 
 
 @csrf_exempt
@@ -153,7 +154,9 @@ def dellog(request):
         password = request.POST.get('password')
         if password == 'dellog':
             servername = request.POST.get('server')
-            do_fab = 'fab --roles=%s define:value=%s doDellog -f fabfile.py' % (servername, servername)
+            log_date = request.POST.get('log_date')
+            do_fab = 'fab --roles=%s define:value=%s definedate:log_date=%s doDellog -f fabfile.py' % (
+                servername, servername, log_date)
             do_dellog = os.popen(do_fab)
             log_outer = do_dellog.read().decode('gb18030').encode('utf-8')
             log_path = os.path.join('exeLog', "deleteLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")

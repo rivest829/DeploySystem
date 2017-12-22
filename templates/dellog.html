@@ -38,6 +38,15 @@
                             </select>
                         </p>
                         <p style="width: 20%;margin: 0 auto;">
+                            <label for="exampleInputFile">日志日期：</label>
+                            <select name="log_date">
+                                <option value=""></option>
+                                {% for row in  date_list %}
+                                    <option value="{{ row }}">{{ row }}</option>
+                                {% endfor %}
+                            </select>
+                        </p>
+                        <p style="width: 20%;margin: 0 auto;">
                             <button type="submit" value="Delete Log!" name="Delete Log!" class="btn btn-default">Delete
                                 Log!
                             </button>
