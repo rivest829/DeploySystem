@@ -57,6 +57,9 @@ def deploy(request):
     if request.method == 'POST':
         if (request.POST.get('dellog', None)) == 'dellog':
             return render_to_response('dellog.html', {'permissions': allow_server,'date_list':date_list})
+    if request.method == 'POST':
+        if (request.POST.get('touch', None)) == 'touch':
+            return render_to_response('touch.html', {'permissions': allow_server})
 
 
 @csrf_exempt
@@ -184,3 +187,36 @@ def dellog(request):
         else:
             error_msg = '口令错！'
             return render(request, 'dellog.html', {'error_msg': error_msg, 'permissions': allow_server})
+
+@csrf_exempt
+def touch(request):
+    user = request.COOKIES.get('user', '')
+    if request.POST.has_key('touch'):
+        allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
+        password = request.POST.get('password')
+        if password == 'touchtouch':
+            servername = request.POST.get('server')
+            target = request.POST.get('target')
+            do_fab = 'fab --roles=%s define:value=%s definedate:log_date=%s doTouch -f fabfile.py' % (
+                servername, servername, target)
+            do_dellog = os.popen(do_fab)
+            log_outer = do_dellog.read().decode('gb18030').encode('utf-8')
+            log_path = os.path.join('exeLog', "touchLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
+            with open(log_path, mode='a') as f:
+                f.write(log_outer + '**************operator:' + user)
+            return HttpResponse('''<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        Murong
+                    </head>
+                    <body>
+                    <form>
+                        '''
+                                + log_outer.replace('[', '<br>[') + '<br><br>执行人：' + user +
+                                ''' </form>
+                                </body>
+                                </html>
+                                </html>''')
+        else:
+            error_msg = '口令错！'
+            return render(request, 'touch.html', {'error_msg': error_msg, 'permissions': allow_server})

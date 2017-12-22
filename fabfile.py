@@ -71,6 +71,11 @@ def dellog():
         run('rm -rf %s'%date)
 
 @roles()
+def touch():
+    with cd('/home/%s/jboss5/server/default/deploy/%s.war/WEB-INF'%(command,date)):
+        run('touch web.xml')
+
+@roles()
 def jboss():
     run('sh ~/jboss5/bin/start.sh', pty=False)
     run('ygstart -a')
@@ -88,3 +93,6 @@ def doJboss():
 
 def doDellog():
     execute(dellog)
+
+def doTouch():
+    execute(touch)
