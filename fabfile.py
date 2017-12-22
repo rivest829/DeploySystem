@@ -68,9 +68,8 @@ def commander():
 @roles()
 def dellog():
     with cd('/home/%s/trc'%command):
-        run('ls -lrht|head -1')
-        run('ls -lrht|head -3|awk \'{print $9}\'|xargs rm -rf')
-        run('ls -lrht|head -1')
+        run('rm -f %s/*'%date)
+
 @roles()
 def jboss():
     run('sh ~/jboss5/bin/start.sh', pty=False)
