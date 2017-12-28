@@ -94,7 +94,9 @@ def upload(request):
 <form>
     '''
                         + uouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                        '''
+                        '''<p class="text-center text-info">
+				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+			</p>
                         </form>
                         </body>
                         </html>
@@ -122,7 +124,9 @@ def execute(request):
     <form>
         '''
                             + eouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                            '''
+                            '''<p class="text-center text-info">
+				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+			</p>
                             </form>
                             </body>
                             </html>
@@ -145,7 +149,9 @@ def execute(request):
     <form>
         '''
                             + jouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                            '''
+                            '''<p class="text-center text-info">
+				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+			</p>
                             </form>
                             </body>
                             </html>
@@ -177,7 +183,9 @@ def dellog(request):
                     <form>
                         '''
                                 + log_outer.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                                ''' </form>
+                                '''<p class="text-center text-info">
+				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+			</p> </form>
                                 </body>
                                 </html>
                                 </html>''')
@@ -210,7 +218,9 @@ def touch(request):
                     <form>
                         '''
                                 + log_outer.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                                ''' </form>
+                                '''<p class="text-center text-info">
+				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+			</p> </form>
                                 </body>
                                 </html>
                                 </html>''')
