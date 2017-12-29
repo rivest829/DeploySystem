@@ -73,10 +73,12 @@ def stepResponse(request):
     for stepObj in stepQueryset:
         res='开发负责人：'+stepObj.developer+'需求号：'+stepObj.requestNum+'部署步骤：'+stepObj.deployStep+'额外步骤：'+stepObj.extantionStep+'<br>'
         allres+=res
+    if allres=='':
+        allres='没查到'
     return HttpResponse('''<!DOCTYPE html> 
 <html lang="en">
 <head>
-    沐融部署步骤归纳
+    沐融部署步骤
 </head>
 <body>
 <form>

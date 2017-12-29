@@ -10,9 +10,9 @@ class UserInfo(models.Model):
     password=models.CharField(max_length=32)
     Permissions=models.TextField(max_length=322)
 class DeploySteps(models.Model):
-    requestNum=models.CharField(max_length=32)
-    developer=models.CharField(max_length=32)
-    deployStep = models.TextField(max_length=322)
-    extantionStep=models.TextField(max_length=322)
+    requestNum=models.CharField(max_length=32)#需求号
+    developer=models.CharField(max_length=32)#开发者
+    deployStep = models.TextField(max_length=322)#部署步骤
+    extantionStep=models.TextField(max_length=322)#额外步骤
 
 
