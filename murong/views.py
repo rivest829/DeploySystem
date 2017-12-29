@@ -60,7 +60,31 @@ def deploy(request):
     if request.method == 'POST':
         if (request.POST.get('touch', None)) == 'touch':
             return render_to_response('touch.html', {'permissions': allow_server})
+    if request.method == 'POST':
+        if (request.POST.get('stepResponse', None)) == '查询部署步骤':
+            return render_to_response('stepResponse.html')
 
+@csrf_exempt
+def stepResponse(request):
+    allres =''
+    reqNum = request.POST.get('reqNum')
+    #stepResponse = models.DeploySteps.objects.filter(requestNum=reqNum).get()
+    stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum)
+    for stepObj in stepQueryset:
+        res='开发负责人：'+stepObj.developer+'需求号：'+stepObj.requestNum+'部署步骤：'+stepObj.deployStep+'额外步骤：'+stepObj.extantionStep+'<br>'
+        allres+=res
+    return HttpResponse('''<!DOCTYPE html> 
+<html lang="en">
+<head>
+    沐融部署步骤归纳
+</head>
+<body>
+<form>
+    '''+allres+'''
+                        </form>
+                        </body>
+                        </html>
+                        </html>''')
 
 @csrf_exempt
 def upload(request):
@@ -108,9 +132,12 @@ def execute(request):
     user = request.COOKIES.get('user', '')
     if request.POST.has_key('execute'):
         servername = request.POST.get('server')
+        requestNum = request.POST.get('requestNum')
+        extantionStep = request.POST.get('extantionStep')
         command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
         do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
         do_execute = os.popen(do_fab)
+        models.DeploySteps.objects.create(requestNum=requestNum,developer=user,deployStep=command,extantionStep=extantionStep)
         eouter = do_execute.read().decode('gb18030').encode('utf-8')
         log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:

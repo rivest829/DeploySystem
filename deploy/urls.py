@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^execute/', views.execute),
     url(r'^dellog/', views.dellog),
     url(r'^touch/', views.touch),
+    url(r'^stepResponse/', views.stepResponse),
 ]

@@ -1,0 +1,38 @@
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+<head>
+    <meta charset="UTF-8">
+    <title>沐融查部署步骤</title>
+</head>
+{# Display a form #}
+<body background="/static/20171116192242.jpg">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <h3 class="text-center">
+                沐融查部署步骤
+            </h3>
+            <form action="/stepResponse/" class="form-horizontal" role="form" method="post">
+
+			<div class="form-group" >
+					<div class="col-sm-offset-2 col-sm-10">
+                        <input class="form-control" id="reqnum" name="reqNum" type="text" placeholder="需求/BUG号" /><br>
+                        <input type="submit" value="查询部署步骤" name="queryStep" class="btn btn-lg btn-block btn-warning"></input>
+					</div>
+				</div>
+            </form>
+            <p class="text-center text-info">
+                <em></em> 非隐藏功能——<strong></strong>
+                <small></small>
+            </p>
+        </div>
+    </div>
+</div>
+</body>

@@ -9,3 +9,10 @@ class UserInfo(models.Model):
     username=models.CharField(max_length=32)
     password=models.CharField(max_length=32)
     Permissions=models.TextField(max_length=322)
+class DeploySteps(models.Model):
+    requestNum=models.CharField(max_length=32)
+    developer=models.CharField(max_length=32)
+    deployStep = models.TextField(max_length=322)
+    extantionStep=models.TextField(max_length=322)
+
+
