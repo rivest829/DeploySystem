@@ -1,0 +1,49 @@
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+<head>
+    沐融部署步骤
+</head>
+<body>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>
+                        开发负责人
+                    </th>
+                    <th>
+                        需求号
+                    </th>
+                    <th>
+                        部署步骤
+                    </th>
+                    <th>
+                        额外步骤
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="success">
+                    {% for row in  allres %}
+                        <th>
+                            {{ row }}
+                        </th>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+</html>

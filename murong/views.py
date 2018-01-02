@@ -56,7 +56,7 @@ def deploy(request):
             return render_to_response('execute.html', {'permissions': allow_server})
     if request.method == 'POST':
         if (request.POST.get('dellog', None)) == 'dellog':
-            return render_to_response('dellog.html', {'permissions': allow_server,'date_list':date_list})
+            return render_to_response('dellog.html', {'permissions': allow_server, 'date_list': date_list})
     if request.method == 'POST':
         if (request.POST.get('touch', None)) == 'touch':
             return render_to_response('touch.html', {'permissions': allow_server})
@@ -64,29 +64,17 @@ def deploy(request):
         if (request.POST.get('stepResponse', None)) == '查询部署步骤':
             return render_to_response('stepResponse.html')
 
+
 @csrf_exempt
 def stepResponse(request):
-    allres =''
+    allres = ''
     reqNum = request.POST.get('reqNum')
-    #stepResponse = models.DeploySteps.objects.filter(requestNum=reqNum).get()
+    # stepResponse = models.DeploySteps.objects.filter(requestNum=reqNum).get()
     stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum)
     for stepObj in stepQueryset:
-        res='开发负责人：'+stepObj.developer+'需求号：'+stepObj.requestNum+'部署步骤：'+stepObj.deployStep+'额外步骤：'+stepObj.extantionStep+'<br>'
-        allres+=res
-    if allres=='':
-        allres='没查到'
-    return HttpResponse('''<!DOCTYPE html> 
-<html lang="en">
-<head>
-    沐融部署步骤
-</head>
-<body>
-<form>
-    '''+allres+'''
-                        </form>
-                        </body>
-                        </html>
-                        </html>''')
+        allres=(stepObj.developer,stepObj.requestNum,stepObj.deployStep,stepObj.extantionStep)
+    return render_to_response('stepCallback.html',{'allres':allres})
+
 
 @csrf_exempt
 def upload(request):
@@ -99,7 +87,7 @@ def upload(request):
     if servername != pack.name.split('-')[1]:  # 校验包名与服务器名是否匹配
         return render(request, 'upload.html', {'error_msg': error_msg, 'permissions': allow_server})
     elif (')' in pack.name):
-        error_msg='文件名不可包含括号'
+        error_msg = '文件名不可包含括号'
         return render(request, 'upload.html', {'error_msg': error_msg, 'permissions': allow_server})
     package = open(save_path, mode="wb")
     for item in pack.chunks():
@@ -121,7 +109,7 @@ def upload(request):
     '''
                         + uouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
                         '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
 			</p>
                         </form>
                         </body>
@@ -139,7 +127,12 @@ def execute(request):
         command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
         do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
         do_execute = os.popen(do_fab)
-        models.DeploySteps.objects.create(requestNum=requestNum,developer=user,deployStep=command,extantionStep=extantionStep)
+        models.DeploySteps.objects.create(
+            requestNum=requestNum,
+            developer=user,
+            deployStep=command,
+            extantionStep=extantionStep
+        )
         eouter = do_execute.read().decode('gb18030').encode('utf-8')
         log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:
@@ -154,7 +147,7 @@ def execute(request):
         '''
                             + eouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
                             '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
 			</p>
                             </form>
                             </body>
@@ -179,7 +172,7 @@ def execute(request):
         '''
                             + jouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
                             '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
 			</p>
                             </form>
                             </body>
@@ -213,7 +206,7 @@ def dellog(request):
                         '''
                                 + log_outer.replace('[', '<br>[') + '<br><br>执行人：' + user +
                                 '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
 			</p> </form>
                                 </body>
                                 </html>
@@ -221,6 +214,7 @@ def dellog(request):
         else:
             error_msg = '口令错！'
             return render(request, 'dellog.html', {'error_msg': error_msg, 'permissions': allow_server})
+
 
 @csrf_exempt
 def touch(request):
@@ -248,7 +242,7 @@ def touch(request):
                         '''
                                 + log_outer.replace('[', '<br>[') + '<br><br>执行人：' + user +
                                 '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至'''+log_path+'''</strong>
+				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
 			</p> </form>
                                 </body>
                                 </html>
