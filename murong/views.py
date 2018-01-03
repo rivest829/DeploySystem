@@ -67,13 +67,18 @@ def deploy(request):
 
 @csrf_exempt
 def stepResponse(request):
-    allres = ''
+    allCallbackData=[]
     reqNum = request.POST.get('reqNum')
-    # stepResponse = models.DeploySteps.objects.filter(requestNum=reqNum).get()
-    stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum)
+    developer = request.POST.get('developer')
+    if len(reqNum)==0:
+        stepQueryset = models.DeploySteps.objects.filter(developer=developer)
+    else:
+        stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum)
+
     for stepObj in stepQueryset:
-        allres=(stepObj.developer,stepObj.requestNum,stepObj.deployStep,stepObj.extantionStep)
-    return render_to_response('stepCallback.html',{'allres':allres})
+        rowData=(stepObj.developer,stepObj.requestNum,stepObj.deployStep,stepObj.extantionStep)
+        allCallbackData.append(rowData)
+    return render_to_response('stepCallback.html',{'allres':allCallbackData})
 
 
 @csrf_exempt

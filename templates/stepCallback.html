@@ -31,13 +31,18 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="success">
-                    {% for row in  allres %}
-                        <th>
-                            {{ row }}
-                        </th>
-                    {% endfor %}
-                </tr>
+
+                {% for row in  allres %}
+                    <tr class="success">
+                        {% for coloum in  row %}
+                            <th>
+                                {{ coloum }}
+                            </th>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+
+
                 </tbody>
             </table>
         </div>
