@@ -71,12 +71,12 @@ def stepResponse(request):
     reqNum = request.POST.get('reqNum')
     developer = request.POST.get('developer')
     if len(reqNum)==0:
-        stepQueryset = models.DeploySteps.objects.filter(developer=developer)
+        stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("requestNum")
     else:
-        stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum)
+        stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum).order_by("requestNum")
 
     for stepObj in stepQueryset:
-        rowData=(stepObj.developer,stepObj.requestNum,stepObj.deployStep,stepObj.extantionStep)
+        rowData=(stepObj.developer,stepObj.requestNum,stepObj.deployStep,stepObj.extantionStep,stepObj.serverName)
         allCallbackData.append(rowData)
     return render_to_response('stepCallback.html',{'allres':allCallbackData})
 

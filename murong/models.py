@@ -12,7 +12,7 @@ class UserInfo(models.Model):
 class DeploySteps(models.Model):
     requestNum=models.CharField(max_length=32)#需求号
     developer=models.CharField(max_length=32)#开发者
+    serverName = models.CharField(max_length=32,default="unknown")  # 模块名
     deployStep = models.TextField(max_length=322)#部署步骤
     extantionStep=models.TextField(max_length=322)#额外步骤
-
 
