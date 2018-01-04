@@ -136,7 +136,8 @@ def execute(request):
             requestNum=requestNum,
             developer=user,
             deployStep=command,
-            extantionStep=extantionStep
+            extantionStep=extantionStep,
+            serverName=servername
         )
         eouter = do_execute.read().decode('gb18030').encode('utf-8')
         log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
