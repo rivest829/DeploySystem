@@ -76,7 +76,7 @@ def stepResponse(request):
         stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum).order_by("requestNum")
 
     for stepObj in stepQueryset:
-        rowData=(stepObj.developer,stepObj.requestNum,stepObj.deployStep,stepObj.extantionStep,stepObj.serverName)
+        rowData=(stepObj.id,stepObj.developer,stepObj.requestNum,stepObj.deployStep,stepObj.extantionStep,stepObj.serverName)
         allCallbackData.append(rowData)
     return render_to_response('stepCallback.html',{'allres':allCallbackData})
 
