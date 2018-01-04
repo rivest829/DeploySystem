@@ -1,4 +1,3 @@
-
 {# Load the tag library #}
 {% load bootstrap3 %}
 
@@ -24,48 +23,58 @@
 
             <br><br><br>
             <br><br>
-        <p style="width: 20%;margin: 0 auto;">
-            <label for="exampleInputFile">目标：</label>
-            <select name="server">
-                <option value=""></option>
-                {% for row in  permissions %}
-                    <option value="{{ row }}">{{ row }}</option>
-                {% endfor %}
-            </select>
-            <br><br><br>
-            <label for="exampleInputFile">执行命令：</label>
-            ygstart
-            <select name="GorS">
-                <option value=""></option>
-                <option value="-s">-s</option>
-                <option value="-g">-g</option>
-            </select>
-        </p>
-        <br>
+            <p style="width: 20%;margin: 0 auto;">
+                <label for="exampleInputFile">目标：</label>
+                <select name="server">
+                    <option value=""></option>
+                    {% for row in  permissions %}
+                        <option value="{{ row }}">{{ row }}</option>
+                    {% endfor %}
+                </select>
+                <br><br><br>
+                <label for="exampleInputFile">执行命令：</label>
+                ygstart
+                <select name="GorS">
+                    <option value=""></option>
+                    <option value="-s">-s</option>
+                    <option value="-g">-g</option>
+                </select>
+            </p>
+            <br>
             <p style="width: 20%;margin: 0 auto;">
                 <input class="form-control" name="command" type="text" placeholder="服务名"></input>
             </p>
-        <br><br>
+            <br><br>
             <p style="width: 20%;margin: 0 auto;">
-                需求/BUG号:<input class="form-control" name="requestNum" type="text" placeholder="需求/BUG号(格式：REQ/BUG-编号)"></input>
+                需求/BUG号:<input class="form-control" name="requestNum" type="text"
+                               placeholder="需求/BUG号(格式：REQ/BUG-编号)"></input>
             </p>
-        <br>
+            <br>
             <p style="width: 20%;margin: 0 auto;">
                 额外步骤:<input class="form-control" name="extantionStep" type="text" placeholder="可以为空"></input>
             </p>
-        <br>
-        <p style="width: 20%;margin: 0 auto;">
-            <button type="submit" value="Execute!" name="execute" class="btn btn-default">Execute</button>
-        </p>
+            <br>
+            <p style="width: 20%;margin: 0 auto;">
+                <button type="submit" value="Execute!" name="execute" class="btn btn-default">Execute</button>
+            </p>
             <div>
                 {#        <input type="submit" value="restartJboss" name="restartJboss"/>#}
             </div>
 
         </form>
 
-    <p class="text-center text-info">
-				 <em>提示：</em> 谨慎检查目标服务器，避免启错机器 <strong></strong>  <small>:-)</small>
-			</p>
+        <p class="text-center text-info">
+            <em>提示：</em> 谨慎检查目标服务器，避免启错机器 <strong></strong>
+            <small>:-)</small>
+        </p>
+    </div>
+    <div class="col-md-12 column">
+        <br>
+        <form action="/upload/" method="get" role="form">
+            <p style="width: 20%;margin: 0 auto;">
+                <button type="submit" value="back" name="back" class="btn btn-lg btn-danger">回到主页</button>
+            </p>
+        </form>
     </div>
 </div>
 </body>

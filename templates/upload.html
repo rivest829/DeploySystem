@@ -16,39 +16,48 @@
 
 <body background="/static/20171116192242.jpg">
 <div class="container">
-	<div class="row clearfix">
-		<div class="col-md-12 column">
-        <h3 class="text-center">
-				沐融部署工具
-			</h3>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <h3 class="text-center">
+                沐融部署工具
+            </h3>
             <form class="form-horizontal" action="/upload/" method="post" role="form" enctype="multipart/form-data">
-            <br><br><br>
-            <p style="width: 20%;margin: 0 auto;">
-        <label for="exampleInputFile">目标：</label>
-        <select name="server" class="selectpicker">
-            <option value=""></option>
-            {% for row in  permissions %}
-                <option value="{{ row }}">{{ row }}</option>
-            {% endfor %}
-        </select>
-<br><br><br>
+                <br><br><br>
+                <p style="width: 20%;margin: 0 auto;">
+                    <label for="exampleInputFile">目标：</label>
+                    <select name="server" class="selectpicker">
+                        <option value=""></option>
+                        {% for row in  permissions %}
+                            <option value="{{ row }}">{{ row }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br><br>
 
-					 <label for="exampleInputFile">选择要部署的包：</label>
-            </p>
-            <p style="width: 20%;margin: 0 auto;">
+                    <label for="exampleInputFile">选择要部署的包：</label>
+                </p>
+                <p style="width: 20%;margin: 0 auto;">
                     <input name="data" type="file" class="center"></input>
-            </p>
-					<p class="help-block" style="width: 20%;margin: 0 auto;">
-                <br><br>
+                </p>
+                <p class="help-block" style="width: 20%;margin: 0 auto;">
+                    <br><br>
 
-				<button type="submit" value="Upload" name="upload" class="btn btn-default">Upload</button>
-                <span style="color: red">{{ error_msg }}</span>
-                    </p>
-    </form>
+                    <button type="submit" value="Upload" name="upload" class="btn btn-default">Upload</button>
+                    <span style="color: red">{{ error_msg }}</span>
+                </p>
+            </form>
             <p class="text-center text-info">
-				 <em>提示：</em> 点击"Upload"后，包中文件将直接覆盖到目标服务器， <strong>请谨慎检查包中文件</strong>  <small></small>
-			</p>
-		</div>
-	</div>
+                <em>提示：</em> 点击"Upload"后，包中文件将直接覆盖到目标服务器， <strong>请谨慎检查包中文件</strong>
+                <small></small>
+            </p>
+        </div>
+        <div class="col-md-12 column">
+            <br>
+            <form action="/upload/" method="get" role="form">
+                <p style="width: 20%;margin: 0 auto;">
+                    <button type="submit" value="back" name="back" class="btn btn-lg btn-danger">回到主页</button>
+                </p>
+            </form>
+        </div>
+    </div>
 </div>
 </body>

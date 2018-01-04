@@ -83,6 +83,8 @@ def stepResponse(request):
 
 @csrf_exempt
 def upload(request):
+    if request.GET.get('back',''):
+        return render_to_response('deploy.html')
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     error_msg = '服务器与包名不匹配'
