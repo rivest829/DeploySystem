@@ -68,13 +68,14 @@ def deploy(request):
 @csrf_exempt
 def stepResponse(request):
     allCallbackData=[]
+    delRepeatList=[]
+    repeatTool=(1,1,1,1,1)
     reqNum = request.POST.get('reqNum')
     developer = request.POST.get('developer')
     if len(reqNum)==0:
         stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("requestNum")
     else:
         stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum).order_by("requestNum")
-
     for stepObj in stepQueryset:
         rowData=(stepObj.id,stepObj.developer,stepObj.requestNum,stepObj.deployStep,stepObj.extantionStep,stepObj.serverName)
         allCallbackData.append(rowData)
@@ -106,22 +107,9 @@ def upload(request):
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
         f.write(uouter + "**************operator:" + user)
-    return HttpResponse('''<!DOCTYPE html> 
-<html lang="en">
-<head>
-    Murong Execute
-</head>
-<body>
-<form>
-    '''
-                        + uouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                        '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
-			</p>
-                        </form>
-                        </body>
-                        </html>
-                        </html>''')
+    result = uouter.split('[')
+    log_info = '本次执行日志已保存至' + log_path
+    return render_to_response("resultDeploy.html", {'result': result}, {'log_info': log_info})
 
 
 @csrf_exempt
@@ -145,22 +133,9 @@ def execute(request):
         log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:
             f.write(eouter + '**************operator:' + user)
-        return HttpResponse('''<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        Murong Execute
-    </head>
-    <body>
-    <form>
-        '''
-                            + eouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                            '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
-			</p>
-                            </form>
-                            </body>
-                            </html>
-                            </html>''')
+        result=eouter.split('[')
+        log_info='本次执行日志已保存至' + log_path
+        return render_to_response("resultDeploy.html",{'result': result},{'log_info': log_info})
 
     elif request.POST.has_key('restartJboss'):
         servername = request.POST.get('server')
@@ -170,22 +145,9 @@ def execute(request):
         log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:
             f.write(jouter + '**************operator:' + user)
-        return HttpResponse('''<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        Murong
-    </head>
-    <body>
-    <form>
-        '''
-                            + jouter.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                            '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
-			</p>
-                            </form>
-                            </body>
-                            </html>
-                            </html>''')
+        result = jouter.split('[')
+        log_info = '本次执行日志已保存至' + log_path
+        return render_to_response("resultDeploy.html", {'result': result}, {'log_info': log_info})
 
 
 @csrf_exempt
@@ -204,24 +166,9 @@ def dellog(request):
             log_path = os.path.join('exeLog', "deleteLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
             with open(log_path, mode='a') as f:
                 f.write(log_outer + '**************operator:' + user)
-            return HttpResponse('''<!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        Murong
-                    </head>
-                    <body>
-                    <form>
-                        '''
-                                + log_outer.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                                '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
-			</p> </form>
-                                </body>
-                                </html>
-                                </html>''')
-        else:
-            error_msg = '口令错！'
-            return render(request, 'dellog.html', {'error_msg': error_msg, 'permissions': allow_server})
+            result = log_outer.split('[')
+            log_info = '本次执行日志已保存至' + log_path
+            return render_to_response("resultDeploy.html", {'result': result}, {'log_info': log_info})
 
 
 @csrf_exempt
@@ -240,21 +187,9 @@ def touch(request):
             log_path = os.path.join('exeLog', "touchLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
             with open(log_path, mode='a') as f:
                 f.write(log_outer + '**************operator:' + user)
-            return HttpResponse('''<!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        Murong
-                    </head>
-                    <body>
-                    <form>
-                        '''
-                                + log_outer.replace('[', '<br>[') + '<br><br>执行人：' + user +
-                                '''<p class="text-center text-info">
-				 <strong>本次执行日志已保存至''' + log_path + '''</strong>
-			</p> </form>
-                                </body>
-                                </html>
-                                </html>''')
+            result = log_outer.split('[')
+            log_info = '本次执行日志已保存至' + log_path
+            return render_to_response("resultDeploy.html", {'result': result}, {'log_info': log_info})
         else:
             error_msg = '口令错！'
             return render(request, 'touch.html', {'error_msg': error_msg, 'permissions': allow_server})
