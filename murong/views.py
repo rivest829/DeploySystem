@@ -67,24 +67,25 @@ def deploy(request):
 
 @csrf_exempt
 def stepResponse(request):
-    allCallbackData=[]
-    delRepeatList=[]
-    repeatTool=(1,1,1,1,1)
+    allCallbackData = []
+    delRepeatList = []
+    repeatTool = (1, 1, 1, 1, 1)
     reqNum = request.POST.get('reqNum')
     developer = request.POST.get('developer')
-    if len(reqNum)==0:
+    if len(reqNum) == 0:
         stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("requestNum")
     else:
         stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum).order_by("requestNum")
     for stepObj in stepQueryset:
-        rowData=(stepObj.id,stepObj.developer,stepObj.requestNum,stepObj.deployStep,stepObj.extantionStep,stepObj.serverName)
+        rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
+                   stepObj.serverName)
         allCallbackData.append(rowData)
-    return render_to_response('stepCallback.html',{'allres':allCallbackData})
+    return render_to_response('stepCallback.html', {'allres': allCallbackData})
 
 
 @csrf_exempt
 def upload(request):
-    if request.GET.get('back',''):
+    if request.GET.get('back', ''):
         return render_to_response('deploy.html')
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
@@ -109,7 +110,7 @@ def upload(request):
         f.write(uouter + "**************operator:" + user)
     result = uouter.split('[')
     log_info = '本次执行日志已保存至' + log_path
-    return render_to_response("resultDeploy.html", {'result': result}, {'log_info': log_info})
+    return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
 
 
 @csrf_exempt
@@ -133,9 +134,10 @@ def execute(request):
         log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:
             f.write(eouter + '**************operator:' + user)
-        result=eouter.split('[')
-        log_info='本次执行日志已保存至' + log_path
-        return render_to_response("resultDeploy.html",{'result': result},{'log_info': log_info})
+        result = eouter.split('[')
+        log_info = '本次执行日志已保存至' + log_path
+        return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
+
 
     elif request.POST.has_key('restartJboss'):
         servername = request.POST.get('server')
@@ -147,7 +149,7 @@ def execute(request):
             f.write(jouter + '**************operator:' + user)
         result = jouter.split('[')
         log_info = '本次执行日志已保存至' + log_path
-        return render_to_response("resultDeploy.html", {'result': result}, {'log_info': log_info})
+        return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
 
 
 @csrf_exempt
@@ -168,7 +170,7 @@ def dellog(request):
                 f.write(log_outer + '**************operator:' + user)
             result = log_outer.split('[')
             log_info = '本次执行日志已保存至' + log_path
-            return render_to_response("resultDeploy.html", {'result': result}, {'log_info': log_info})
+            return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
 
 
 @csrf_exempt
@@ -189,7 +191,7 @@ def touch(request):
                 f.write(log_outer + '**************operator:' + user)
             result = log_outer.split('[')
             log_info = '本次执行日志已保存至' + log_path
-            return render_to_response("resultDeploy.html", {'result': result}, {'log_info': log_info})
+            return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
         else:
             error_msg = '口令错！'
             return render(request, 'touch.html', {'error_msg': error_msg, 'permissions': allow_server})
