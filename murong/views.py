@@ -110,7 +110,11 @@ def upload(request):
         f.write(uouter + "**************operator:" + user)
     result = uouter.split('[')
     log_info = '本次执行日志已保存至' + log_path
-    return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
+    if pack.name in result[-1]:
+        successTag=True
+    else:
+        successTag=False
+    return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':successTag})
 
 
 @csrf_exempt
@@ -136,7 +140,11 @@ def execute(request):
             f.write(eouter + '**************operator:' + user)
         result = eouter.split('[')
         log_info = '本次执行日志已保存至' + log_path
-        return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
+        if 'succeed' in result[-2]:
+            successTag = True
+        else:
+            successTag = False
+        return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':successTag})
 
 
     elif request.POST.has_key('restartJboss'):
@@ -149,7 +157,7 @@ def execute(request):
             f.write(jouter + '**************operator:' + user)
         result = jouter.split('[')
         log_info = '本次执行日志已保存至' + log_path
-        return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
+        return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':True})
 
 
 @csrf_exempt
@@ -170,7 +178,7 @@ def dellog(request):
                 f.write(log_outer + '**************operator:' + user)
             result = log_outer.split('[')
             log_info = '本次执行日志已保存至' + log_path
-            return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
+            return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':True})
 
 
 @csrf_exempt
@@ -191,7 +199,7 @@ def touch(request):
                 f.write(log_outer + '**************operator:' + user)
             result = log_outer.split('[')
             log_info = '本次执行日志已保存至' + log_path
-            return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info})
+            return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':True})
         else:
             error_msg = '口令错！'
             return render(request, 'touch.html', {'error_msg': error_msg, 'permissions': allow_server})

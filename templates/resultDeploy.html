@@ -13,21 +13,28 @@
 <div class="container">
     <div class="row clearfix">
         <div class="col-md-12 column">
-            <h2>
-                Heading
-            </h2>
+
 
             {% for row in  result %}
                 {{ row }}<br>
             {% endfor %}
 
         </div>
-        <p class="text-center text-info">
-
-            执行人：{{ user }}
-
-            <strong>{{ log_info }}</strong>
-        </p>
+        {% if successTag %}
+                <div class="alert alert-success alert-dismissable">
+                    <h4>
+                        成功
+                    </h4> <strong>Succeed!</strong> 执行人：{{ user }}<br>
+                    <strong>{{ log_info }}</strong>
+                </div>
+            {% else %}
+                <div class="alert alert-dismissable alert-danger">
+                    <h4>
+                        失败
+                    </h4> <strong>Failed!</strong> 执行人：{{ user }}<br>
+                    <strong>{{ log_info }}</strong>
+                </div>
+            {% endif %}
         <div class="col-md-12 column">
             <br>
             <form action="/upload/" method="get" role="form">
