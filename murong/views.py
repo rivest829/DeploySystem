@@ -4,7 +4,7 @@ from django.shortcuts import render, render_to_response,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import os, time
 from murong import models
-
+import json
 #代码复用
 def queryset_to_list(queryset):
     allCallbackData=[]
@@ -80,25 +80,48 @@ def stepResponse(request):
         stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum).order_by("requestNum")
     global stepQueryset
     allCallbackData=queryset_to_list(stepQueryset)
-    return render_to_response('stepCallback.html', {'allres': allCallbackData})
+    response = render_to_response('stepCallback.html', {'allres': allCallbackData})
+    response.set_cookie('steps', json.dumps(allCallbackData), 3600)
+    return response
 
 
 @csrf_exempt
 def upload(request):
+    if request.GET.get('duplicate',''):
+        allCallbackData = []
+        duplicate_list=[]
+        for stepObj in stepQueryset:
+            rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
+                       stepObj.serverName)
+            if rowData[3] in duplicate_list:
+                continue
+            duplicate_list.append(rowData[3])
+            allCallbackData.append(rowData)
+        response=render_to_response('stepCallback.html', {'allres': allCallbackData})
+        response.set_cookie('steps', json.dumps(allCallbackData), 3600)
+        return response
     if request.GET.get('order_type', ''):
         order_type=request.GET.get('order_type', '')
         orderset=stepQueryset.order_by(order_type)
         allCallbackData=queryset_to_list(orderset)
-        return render_to_response('stepCallback.html', {'allres': allCallbackData})
+        response = render_to_response('stepCallback.html', {'allres': allCallbackData})
+        response.set_cookie('steps', json.dumps(allCallbackData), 3600)
+        return response
 
     if request.GET.get('stepout', ''):
-        allCallbackData=queryset_to_list(stepQueryset)
+        allCallbackData= json.loads(request.COOKIES.get('steps', '').encode('utf-8'))
+        if allCallbackData=='':
+            allCallbackData=queryset_to_list(stepQueryset)
         stepout = ''
         for row in allCallbackData:
             stepout += row[3] + ';'
         return HttpResponse(stepout.replace('\'',''))
+
+
     if request.GET.get('back', ''):
         return render_to_response('deploy.html')
+
+
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     error_msg = '服务器与包名不匹配'

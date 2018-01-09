@@ -12,15 +12,21 @@
 <body>
 <div class="container">
     <div class="row clearfix">
-    <div class="col-md-12 column">
+        <div class="col-md-12 column">
             <br>
             <form action="/upload/" method="get" role="form">
-                <div class="col-md-6 column">
+                <div class="col-md-4 column">
                     <p style="width: 20%;margin: 0 auto;float:left">
                         <button type="submit" value="back" name="back" class="btn btn-lg btn-primary">回到主页</button>
                     </p>
                 </div>
-                <div class="col-md-6 column">
+                <div class="col-md-4 column">
+                    <p style="width: 20%;margin: 0 auto">
+                        <button type="submit" value="duplicate" name="duplicate" class="btn btn-lg btn-danger">步骤去重
+                        </button>
+                    </p>
+                </div>
+                <div class="col-md-4 column">
                     <p style="width: 20%;margin: 0 auto;float:right">
                         <button type="submit" value="stepout" name="stepout" class="btn btn-lg btn-danger">格式化输出
                         </button>
@@ -28,8 +34,10 @@
                 </div>
             </form>
         </div>
+
         <div class="col-md-12 column">
             <form action="/upload/" method="get" role="form">
+            <br><br>
                 <table class="table table-striped table-condensed">
                     <thead>
                     <tr>
