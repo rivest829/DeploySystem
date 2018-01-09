@@ -56,16 +56,12 @@ def deploy(request):
     if request.method == 'POST':
         if (request.POST.get('upload', None)) == '部署':
             return render_to_response('upload.html', {'permissions': allow_server})
-    if request.method == 'POST':
         if (request.POST.get('execute', None)) == '重启服务':
             return render_to_response('execute.html', {'permissions': allow_server})
-    if request.method == 'POST':
         if (request.POST.get('dellog', None)) == 'dellog':
             return render_to_response('dellog.html', {'permissions': allow_server, 'date_list': date_list})
-    if request.method == 'POST':
         if (request.POST.get('touch', None)) == 'touch':
             return render_to_response('touch.html', {'permissions': allow_server})
-    if request.method == 'POST':
         if (request.POST.get('stepResponse', None)) == '查询部署步骤':
             return render_to_response('stepResponse.html')
 
@@ -155,10 +151,14 @@ def upload(request):
 @csrf_exempt
 def execute(request):
     user = request.COOKIES.get('user', '')
+    allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.POST.has_key('execute'):
         servername = request.POST.get('server')
-        requestNum = request.POST.get('requestNum')
+        requestNum = request.POST.get('requestNum','')
         extantionStep = request.POST.get('extantionStep')
+        if requestNum=='':
+            err='请输入需求号'
+            return render_to_response('execute.html', {'permissions': allow_server,'err':err})
         command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
         do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
         do_execute = os.popen(do_fab)
@@ -180,20 +180,6 @@ def execute(request):
         else:
             successTag = False
         return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':successTag})
-
-
-    elif request.POST.has_key('restartJboss'):
-        servername = request.POST.get('server')
-        do_fab = 'fab --roles=%s doJboss -f fabfile.py' % (servername)
-        do_jboss = os.popen(do_fab)
-        jouter = do_jboss.read().decode('gb18030').encode('utf-8')
-        log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
-        with open(log_path, mode='a') as f:
-            f.write(jouter + '**************operator:' + user)
-        result = jouter.split('[')
-        log_info = '本次执行日志已保存至' + log_path
-        return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':True})
-
 
 @csrf_exempt
 def dellog(request):
