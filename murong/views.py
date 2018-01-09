@@ -5,7 +5,14 @@ from django.views.decorators.csrf import csrf_exempt
 import os, time
 from murong import models
 
-
+#代码复用
+def queryset_to_list(queryset):
+    allCallbackData=[]
+    for stepObj in queryset:
+        rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
+                   stepObj.serverName)
+        allCallbackData.append(rowData)
+    return allCallbackData
 # Create your views here.
 # 业务逻辑代码
 
@@ -65,26 +72,27 @@ def deploy(request):
 
 @csrf_exempt
 def stepResponse(request):
-    allCallbackData = []
-    delRepeatList = []
-    repeatTool = (1, 1, 1, 1, 1)
     reqNum = request.POST.get('reqNum')
     developer = request.POST.get('developer')
     if len(reqNum) == 0:
         stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("requestNum")
     else:
         stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum).order_by("requestNum")
-    for stepObj in stepQueryset:
-        rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
-                   stepObj.serverName)
-        allCallbackData.append(rowData)
-    global allCallbackData
+    global stepQueryset
+    allCallbackData=queryset_to_list(stepQueryset)
     return render_to_response('stepCallback.html', {'allres': allCallbackData})
 
 
 @csrf_exempt
 def upload(request):
+    if request.GET.get('order_type', ''):
+        order_type=request.GET.get('order_type', '')
+        orderset=stepQueryset.order_by(order_type)
+        allCallbackData=queryset_to_list(orderset)
+        return render_to_response('stepCallback.html', {'allres': allCallbackData})
+
     if request.GET.get('stepout', ''):
+        allCallbackData=queryset_to_list(stepQueryset)
         stepout = ''
         for row in allCallbackData:
             stepout += row[3] + ';'
