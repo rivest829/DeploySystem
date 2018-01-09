@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render, HttpResponse, render_to_response
-from django.http import HttpResponseRedirect, HttpResponse
-from django.template import RequestContext
+from django.shortcuts import render, render_to_response,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import os, time
 from murong import models
@@ -80,11 +78,17 @@ def stepResponse(request):
         rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
                    stepObj.serverName)
         allCallbackData.append(rowData)
+    global allCallbackData
     return render_to_response('stepCallback.html', {'allres': allCallbackData})
 
 
 @csrf_exempt
 def upload(request):
+    if request.GET.get('stepout', ''):
+        stepout = ''
+        for row in allCallbackData:
+            stepout += row[3] + ';'
+        return HttpResponse(stepout.replace('\'',''))
     if request.GET.get('back', ''):
         return render_to_response('deploy.html')
     user = request.COOKIES.get('user', '')
