@@ -5,6 +5,18 @@ from django.views.decorators.csrf import csrf_exempt
 import os, time
 from murong import models
 import json
+#重写
+from datetime import datetime,timedelta,tzinfo
+class GMT8(tzinfo):
+    delta=timedelta(hours=8)
+    def utcoffset(self,dt):
+        return self.delta
+    def tzname(self,dt):
+        return "GMT+8"
+    def dst(self,dt):
+        return self.delta
+
+
 #代码复用
 def queryset_to_list(queryset):
     allCallbackData=[]
@@ -167,7 +179,7 @@ def execute(request):
             developer=user,
             deployStep=command,
             extantionStep=extantionStep,
-            serverName=servername
+            serverName=servername,
         )
         eouter = do_execute.read().decode('gb18030').encode('utf-8')
         log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
