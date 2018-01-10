@@ -1,30 +1,37 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render, render_to_response,HttpResponse
+from django.shortcuts import render, render_to_response, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import os, time
 from murong import models
 import json
-#重写
-from datetime import datetime,timedelta,tzinfo
+# 重写
+from datetime import datetime, timedelta, tzinfo
+
+
 class GMT8(tzinfo):
-    delta=timedelta(hours=8)
-    def utcoffset(self,dt):
+    delta = timedelta(hours=8)
+
+    def utcoffset(self, dt):
         return self.delta
-    def tzname(self,dt):
+
+    def tzname(self, dt):
         return "GMT+8"
-    def dst(self,dt):
+
+    def dst(self, dt):
         return self.delta
 
 
-#代码复用
+# 代码复用
 def queryset_to_list(queryset):
-    allCallbackData=[]
+    allCallbackData = []
     for stepObj in queryset:
         rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
-                   stepObj.serverName,str(stepObj.deployTime).split('.')[0])
+                   stepObj.serverName, str(stepObj.deployTime).split('.')[0])
         allCallbackData.append(rowData)
     return allCallbackData
+
+
 # Create your views here.
 # 业务逻辑代码
 
@@ -87,7 +94,7 @@ def stepResponse(request):
     else:
         stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum).order_by("requestNum")
     global stepQueryset
-    allCallbackData=queryset_to_list(stepQueryset)
+    allCallbackData = queryset_to_list(stepQueryset)
     response = render_to_response('stepCallback.html', {'allres': allCallbackData})
     response.set_cookie('steps', json.dumps(allCallbackData), 3600)
     return response
@@ -95,40 +102,44 @@ def stepResponse(request):
 
 @csrf_exempt
 def upload(request):
-    if request.GET.get('duplicate',''):
+    if request.GET.get('duplicate', ''):
         allCallbackData = []
-        duplicate_list=[]
+        duplicate_list = []
         for stepObj in stepQueryset:
             rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
-                       stepObj.serverName,str(stepObj.deployTime).split('.')[0])
+                       stepObj.serverName, str(stepObj.deployTime).split('.')[0])
             if rowData[3] in duplicate_list:
                 continue
             duplicate_list.append(rowData[3])
             allCallbackData.append(rowData)
-        response=render_to_response('stepCallback.html', {'allres': allCallbackData})
+        response = render_to_response('stepCallback.html', {'allres': allCallbackData})
         response.set_cookie('steps', json.dumps(allCallbackData), 3600)
         return response
     if request.GET.get('order_type', ''):
-        order_type=request.GET.get('order_type', '')
-        orderset=stepQueryset.order_by(order_type)
-        allCallbackData=queryset_to_list(orderset)
+        order_type = request.GET.get('order_type', '')
+        orderset = stepQueryset.order_by(order_type)
+        allCallbackData = queryset_to_list(orderset)
         response = render_to_response('stepCallback.html', {'allres': allCallbackData})
         response.set_cookie('steps', json.dumps(allCallbackData), 3600)
         return response
 
     if request.GET.get('stepout', ''):
-        allCallbackData= json.loads(request.COOKIES.get('steps', '').encode('utf-8'))
-        if allCallbackData=='':
-            allCallbackData=queryset_to_list(stepQueryset)
+        dict_stepout = {}
+        allCallbackData = json.loads(request.COOKIES.get('steps', '').encode('utf-8'))
+        if allCallbackData == '':
+            allCallbackData = queryset_to_list(stepQueryset)
         stepout = ''
         for row in allCallbackData:
-            stepout += row[3] + ';'
-        return HttpResponse(stepout.replace('\'',''))
-
+            if row[5] in dict_stepout:
+                dict_stepout[row[5]] += ';' + row[3].replace('\'', '')
+            else:
+                dict_stepout[row[5]] = row[3].replace('\'', '')
+        for key in dict_stepout:
+            stepout+=key+':================'+dict_stepout[key]+'<br>'
+        return HttpResponse(stepout)
 
     if request.GET.get('back', ''):
         return render_to_response('deploy.html')
-
 
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
@@ -154,10 +165,11 @@ def upload(request):
     result = uouter.split('[')
     log_info = '本次执行日志已保存至' + log_path
     if pack.name in result[-1]:
-        successTag=True
+        successTag = True
     else:
-        successTag=False
-    return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':successTag})
+        successTag = False
+    return render_to_response("resultDeploy.html",
+                              {'result': result, 'user': user, 'log_info': log_info, 'successTag': successTag})
 
 
 @csrf_exempt
@@ -166,11 +178,11 @@ def execute(request):
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.POST.has_key('execute'):
         servername = request.POST.get('server')
-        requestNum = request.POST.get('requestNum','')
+        requestNum = request.POST.get('requestNum', '')
         extantionStep = request.POST.get('extantionStep')
-        if requestNum=='':
-            err='请输入需求号'
-            return render_to_response('execute.html', {'permissions': allow_server,'err':err})
+        if requestNum == '':
+            err = '请输入需求号'
+            return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
         command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
         do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
         do_execute = os.popen(do_fab)
@@ -191,7 +203,9 @@ def execute(request):
             successTag = True
         else:
             successTag = False
-        return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':successTag})
+        return render_to_response("resultDeploy.html",
+                                  {'result': result, 'user': user, 'log_info': log_info, 'successTag': successTag})
+
 
 @csrf_exempt
 def dellog(request):
@@ -211,7 +225,8 @@ def dellog(request):
                 f.write(log_outer + '**************operator:' + user)
             result = log_outer.split('[')
             log_info = '本次执行日志已保存至' + log_path
-            return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':True})
+            return render_to_response("resultDeploy.html",
+                                      {'result': result, 'user': user, 'log_info': log_info, 'successTag': True})
 
 
 @csrf_exempt
@@ -232,7 +247,8 @@ def touch(request):
                 f.write(log_outer + '**************operator:' + user)
             result = log_outer.split('[')
             log_info = '本次执行日志已保存至' + log_path
-            return render_to_response("resultDeploy.html", {'result': result, 'user': user, 'log_info': log_info,'successTag':True})
+            return render_to_response("resultDeploy.html",
+                                      {'result': result, 'user': user, 'log_info': log_info, 'successTag': True})
         else:
             error_msg = '口令错！'
             return render(request, 'touch.html', {'error_msg': error_msg, 'permissions': allow_server})
