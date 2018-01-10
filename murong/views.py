@@ -22,7 +22,7 @@ def queryset_to_list(queryset):
     allCallbackData=[]
     for stepObj in queryset:
         rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
-                   stepObj.serverName)
+                   stepObj.serverName,str(stepObj.deployTime).split('.')[0])
         allCallbackData.append(rowData)
     return allCallbackData
 # Create your views here.
@@ -100,7 +100,7 @@ def upload(request):
         duplicate_list=[]
         for stepObj in stepQueryset:
             rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
-                       stepObj.serverName)
+                       stepObj.serverName,str(stepObj.deployTime).split('.')[0])
             if rowData[3] in duplicate_list:
                 continue
             duplicate_list.append(rowData[3])
