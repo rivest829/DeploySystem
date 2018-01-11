@@ -1,4 +1,5 @@
 {# Load the tag library #}
+{% extends 'base.html' %}
 {% load bootstrap3 %}
 
 {# Load CSS and JavaScript #}
@@ -7,8 +8,7 @@
 
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
-<head>
-</head>
+{% block page-content %}
 <body>
 <div class="container">
     <div class="row clearfix">
@@ -90,3 +90,4 @@
     </div>
 </div>
 </body>
+{% endblock %}

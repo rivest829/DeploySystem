@@ -38,8 +38,8 @@ def queryset_to_list(queryset):
 @csrf_exempt
 def login(request):
     error_msg = ''
-    pwd = 'fNv2MmUkSF05TAa4xhmVF26rJk3obniEIoKAUEZ5nMNGkmqy8'
     user = request.POST.get('user', None)
+
     pwd = request.POST.get('pwd', None)
     if request.method == 'POST':
         if user == '':
@@ -51,7 +51,8 @@ def login(request):
                 error_msg = '用户不存在'
                 return render(request, 'login.html', {'error_msg': error_msg})
             if pwd_in_db == pwd:
-                response = render_to_response('deploy.html')
+                allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
+                response = render_to_response('upload.html',{'permissions': allow_server})
 
                 # 将username写入浏览器cookie,失效时间为3600
                 response.set_cookie('user', user, 3600)
@@ -75,13 +76,13 @@ def deploy(request):
     if request.method == 'POST':
         if (request.POST.get('upload', None)) == '部署':
             return render_to_response('upload.html', {'permissions': allow_server})
-        if (request.POST.get('execute', None)) == '重启服务':
+        if (request.POST.get('execute', None)) == '重启':
             return render_to_response('execute.html', {'permissions': allow_server})
         if (request.POST.get('dellog', None)) == 'dellog':
             return render_to_response('dellog.html', {'permissions': allow_server, 'date_list': date_list})
         if (request.POST.get('touch', None)) == 'touch':
             return render_to_response('touch.html', {'permissions': allow_server})
-        if (request.POST.get('stepResponse', None)) == '查询部署步骤':
+        if (request.POST.get('stepResponse', None)) == '查询':
             return render_to_response('stepResponse.html')
 
 

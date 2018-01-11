@@ -1,0 +1,36 @@
+{# Load the tag library #}
+
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+<!DOCTYPE html>
+<html lang="en">
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container-fluid">
+    <div class="navbar-header">
+        <a class="navbar-brand">人保金服应用部署系统</a>
+    </div>
+    <div>
+        <form class="form-horizontal" role="form" action="/deploy/" method="post" enctype="multipart/form-data">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <input type="submit" value="部署" name="upload" class="btn btn-block btn-info navbar-btn">
+            </li>
+            <li><input type="submit" value="重启" name="execute" class="btn btn-block btn-info navbar-btn"></li>
+            <li><input type="submit" value="查询" name="stepResponse" class="btn btn-block btn-info navbar-btn"></li>
+        </ul>x
+             </form>
+    </div>
+    </div>
+
+</nav>
+ {% block page-content %}
+                your page content
+            {% endblock %}
+</html>
