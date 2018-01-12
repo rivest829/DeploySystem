@@ -54,8 +54,8 @@ def login(request):
                 allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
                 response = render_to_response('upload.html',{'permissions': allow_server})
 
-                # 将username写入浏览器cookie,失效时间为3600
-                response.set_cookie('user', user, 3600)
+                # 将username写入浏览器cookie
+                response.set_cookie('user', user)
                 return response
             else:
                 error_msg = '用户名密码错误'
