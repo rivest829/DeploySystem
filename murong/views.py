@@ -182,7 +182,10 @@ def execute(request):
         requestNum = request.POST.get('requestNum', '')
         extantionStep = request.POST.get('extantionStep')
         if requestNum == '':
-            err = '请输入需求号'
+            err = '请输入需求号！'
+            return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
+        elif servername=='':
+            err = '请选择部署目标！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
         command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
         do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
