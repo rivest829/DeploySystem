@@ -187,13 +187,6 @@ def execute(request):
         command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
         do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
         do_execute = os.popen(do_fab)
-        models.DeploySteps.objects.create(
-            requestNum=requestNum,
-            developer=user,
-            deployStep=command,
-            extantionStep=extantionStep,
-            serverName=servername,
-        )
         eouter = do_execute.read().decode('gb18030').encode('utf-8')
         log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:
@@ -202,6 +195,13 @@ def execute(request):
         log_info = '本次执行日志已保存至' + log_path
         if 'succeed' in result[-2]:
             successTag = True
+            models.DeploySteps.objects.create(
+                requestNum=requestNum,
+                developer=user,
+                deployStep=command,
+                extantionStep=extantionStep,
+                serverName=servername,
+            )
         else:
             successTag = False
         return render_to_response("resultDeploy.html",
