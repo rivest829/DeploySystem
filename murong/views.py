@@ -184,7 +184,7 @@ def execute(request):
         if requestNum == '':
             err = '请输入需求号！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
-        elif servername=='':
+        elif servername=='unknown':
             err = '请选择部署目标！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
         command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
