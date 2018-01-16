@@ -93,7 +93,7 @@ def stepResponse(request):
     if len(reqNum) == 0:
         stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("requestNum")
     else:
-        stepQueryset = models.DeploySteps.objects.filter(requestNum=reqNum).order_by("requestNum")
+        stepQueryset = models.DeploySteps.objects.filter(requestNum__contains=reqNum).order_by("requestNum")
     global stepQueryset
     allCallbackData = queryset_to_list(stepQueryset)
     response = render_to_response('stepCallback.html', {'allres': allCallbackData})
