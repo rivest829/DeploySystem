@@ -32,6 +32,7 @@ def queryset_to_list(queryset):
     return allCallbackData
 
 
+
 # Create your views here.
 # 业务逻辑代码
 
@@ -121,6 +122,7 @@ def upload(request):
         orderset = stepQueryset.order_by(order_type)
         allCallbackData = queryset_to_list(orderset)
         response = render_to_response('stepCallback.html', {'allres': allCallbackData})
+
         response.set_cookie('steps', json.dumps(allCallbackData), 3600)
         return response
 
