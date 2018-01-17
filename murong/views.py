@@ -181,7 +181,9 @@ def execute(request):
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.POST.has_key('execute'):
         servername = request.POST.get('server')
+        group_or_single=request.POST.get('GorS')
         requestNum = request.POST.get('requestNum', '')
+        module_name=request.POST.get('command', '')
         extantionStep = request.POST.get('extantionStep')
         if requestNum == '':
             err = '请输入需求号！'
@@ -189,7 +191,13 @@ def execute(request):
         elif servername=='unknown':
             err = '请选择部署目标！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
-        command = '\'ygstart ' + request.POST.get('GorS') + ' ' + request.POST.get('command') + '\''
+        elif group_or_single=='':
+            err = '请指定ygstart参数！'
+            return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
+        elif module_name=='':
+            err = '请输入服务名！'
+            return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
+        command = '\'ygstart ' + group_or_single + ' ' + module_name + '\''
         do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
         do_execute = os.popen(do_fab)
         eouter = do_execute.read().decode('gb18030').encode('utf-8')
