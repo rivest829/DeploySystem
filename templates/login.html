@@ -9,37 +9,64 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 
-<body background="/static/20171116192242.jpg">
-<div class="container">
-	<div class="row clearfix">
-		<div class="col-md-12 column">
-			<h3 class="text-center">
-				人保金服应用部署系统
-			</h3>
-			<form class="form-horizontal" role="form" method="post">
-				<div class="form-group">
-					 <label for="username" class="col-sm-2 control-label">用户名：</label>
-					<div class="col-sm-10">
-						<input class="form-control" id="username" name="user" type="text" placeholder="用户名" />
-					</div>
-				</div>
-				<div class="form-group">
-					 <label for="inputPassword3" class="col-sm-2 control-label">密码：</label>
-					<div class="col-sm-10">
-						<input class="form-control" id="password" name="pwd" type="password" placeholder="密码" />
-					</div>
-				</div>
-				<div class="form-group" >
-					<div class="col-sm-offset-2 col-sm-10">
-						 <button type="submit" class="btn btn-default">登录</button><span style="color: red">{{ error_msg }}</span>
-					</div>
+<body background="/static/background.jpg">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <div class="navbar-header">
+        <a class="navbar-brand" >人保金服应用部署系统</a>
+    </div>
+    <div>
 
-				</div>
-			</form>
-			<p class="text-center text-info">
-				 <em>提示：</em> 使用前请仔细检查包中文件， <strong>严禁擅自修改</strong>  <small></small>
-			</p>
-		</div>
-	</div>
+        <p class="navbar-text navbar-left"></p>
+        <!--向右对齐-->
+
+        <form class="navbar-form navbar-right" role="form" action="/deploy/" method="post" enctype="multipart/form-data">
+            <input type="submit" value="注册" name="register" class="btn btn-block btn-default navbar-btn">
+        </form>
+        <p class="navbar-text navbar-right">北京沐融信息科技有限公司</p>
+    </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-6 column " style="padding: 100px 100px 10px;float: none;
+                                                            display: block;
+                                                            margin-left: auto;
+                                                            margin-right: auto;  ">
+            <h3 class="text-center">
+
+            </h3>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">人保金服应用部署系统</h3>
+                </div>
+                <div class="panel-body">
+
+<br>
+            <form class="form-horizontal" role="form" method="post">
+
+                <div class="input-group ">
+                    <span class="input-group-addon">用户：</span>
+                    <input class="form-control" id="username" name="user" type="text" placeholder="请输入"/>
+                </div>
+<br>
+                <div class="input-group">
+                    <span class="input-group-addon">密码：</span>
+                    <input class="form-control" id="password" name="pwd" type="password" placeholder="请输入"/>
+                </div>
+<br>
+                <div class="col-md-14 column ">
+                    <button type="submit" class="btn btn-block btn-default btn-default">登录</button>
+                    <span style="color: red">{{ error_msg }}</span>
+                </div>
+
+            </form>
+                    </div>
+            </div>
+            <p class="text-center text-info">
+                <small></small>
+            </p>
+        </div>
+    </div>
 </div>
 </body>
