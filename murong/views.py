@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render, render_to_response, HttpResponse
+from django.shortcuts import render, render_to_response, HttpResponse,HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 import os, time
 from murong import models
@@ -8,7 +8,9 @@ import json
 # 重写
 from datetime import datetime, timedelta, tzinfo
 
-
+#TODO
+#1、__MACOSX问题
+#2、拖拽上传
 class GMT8(tzinfo):
     delta = timedelta(hours=8)
 
@@ -43,6 +45,9 @@ def login(request):
 
     pwd = request.POST.get('pwd', None)
     if request.method == 'POST':
+        if (request.POST.get('sysinfo', None)) == '查看系统状态':
+            sysinfo=sysInfo('cgdgw')
+            return render_to_response('login.html', {'sysinfo': sysinfo})
         if user == '':
             error_msg = '用户名为空'
         else:
@@ -85,6 +90,8 @@ def deploy(request):
             return render_to_response('touch.html', {'permissions': allow_server})
         if (request.POST.get('stepResponse', None)) == '查询':
             return render_to_response('stepResponse.html')
+        if (request.POST.get('exit', None)) == '注销':
+            return HttpResponseRedirect('/murong/')
 
 
 @csrf_exempt
@@ -189,6 +196,7 @@ def execute(request):
             err = '请输入需求号！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
         elif servername=='unknown':
+
             err = '请选择部署目标！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
         elif group_or_single=='':
@@ -266,3 +274,9 @@ def touch(request):
         else:
             error_msg = '口令错！'
             return render(request, 'touch.html', {'error_msg': error_msg, 'permissions': allow_server})
+
+def sysInfo(servername):
+    do_fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (
+        servername,servername)
+    sys_info = os.popen(do_fab).read().decode('gb18030').encode('utf-8')
+    return sys_info
