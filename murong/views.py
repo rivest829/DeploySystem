@@ -283,4 +283,6 @@ def sysInfo(servername):
     do_fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (
         servername,servername)
     sys_info = os.popen(do_fab).read().decode('gb18030').encode('utf-8')
-    return sys_info
+    result = sys_info.split('[')
+    return render_to_response("resultSysinfo.html",
+                              {'result': result})

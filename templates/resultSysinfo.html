@@ -1,0 +1,38 @@
+{# Load the tag library #}
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+{% block page-content %}
+<body background="/static/newlv.jpg">
+<div class="container">
+<br> <br> <br> <br>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            {% for row in  result %}
+                {{ row }}<br>
+            {% endfor %}
+
+        </div>
+
+                <div class="alert alert-success alert-dismissable">
+
+                </div>
+
+        <div class="col-md-12 column">
+            <br>
+            <form action="/upload/" method="get" role="form">
+                <p style="width: 20%;margin: 0 auto;">
+                    <button type="submit" value="back" name="back" class="btn btn-lg btn-default">回到主页</button>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+{% endblock %}
