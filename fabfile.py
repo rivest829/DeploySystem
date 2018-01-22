@@ -63,6 +63,10 @@ def jboss():
     run('sh ~/jboss5/bin/start.sh', pty=False)
     run('ygstart -a')
 
+@roles()
+def sysInfo():
+    run('uptime')
+
 def doWork():
     execute(upload)
     execute(unzip)
@@ -79,3 +83,6 @@ def doDellog():
 
 def doTouch():
     execute(touch)
+
+def doSysInfo():
+    execute(sysInfo)

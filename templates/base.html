@@ -24,15 +24,19 @@
         <input type="submit" value="重启" name="execute" class="btn btn-block btn-default navbar-btn">
         </form>
         <form class="navbar-form navbar-left" role="form" action="/deploy/" method="post" enctype="multipart/form-data">
-            <input type="submit" value="查询" name="stepResponse" class="btn btn-block btn-default navbar-btn">
+            <input type="submit" value="部署记录" name="stepResponse" class="btn btn-block btn-default navbar-btn">
         </form>
+
         <p class="navbar-text navbar-left"></p>
         <!--向右对齐-->
 
         <form class="navbar-form navbar-right" role="form" action="/deploy/" method="post" enctype="multipart/form-data">
-            <input type="submit" value="注销" name="exit" class="btn btn-block btn-default navbar-btn">
+            <input type="submit" value="注销" name="exit" class="btn btn-block btn-danger navbar-btn">
         </form>
         <p class="navbar-text navbar-right">北京沐融信息科技有限公司</p>
+        <form class="navbar-form navbar-right" role="form" action="/deploy/" method="post" enctype="multipart/form-data">
+            <input type="submit" value="系统状态" name="sysInfo" class="btn btn-block btn-info navbar-btn">
+        </form>
     </div>
     </div>
 </nav>

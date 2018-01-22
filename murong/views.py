@@ -48,6 +48,9 @@ def login(request):
         if (request.POST.get('sysinfo', None)) == '查看系统状态':
             sysinfo=sysInfo('cgdgw')
             return render_to_response('login.html', {'sysinfo': sysinfo})
+        if (request.POST.get('register', None)) == '注册':
+            alert='用户注册请联系运维人员'
+            return render_to_response('login.html', {'alert': alert})
         if user == '':
             error_msg = '用户名为空'
         else:
@@ -59,7 +62,6 @@ def login(request):
             if pwd_in_db == pwd:
                 allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
                 response = render_to_response('upload.html',{'permissions': allow_server})
-
                 # 将username写入浏览器cookie
                 response.set_cookie('user', user)
                 return response
@@ -88,8 +90,10 @@ def deploy(request):
             return render_to_response('dellog.html', {'permissions': allow_server, 'date_list': date_list})
         if (request.POST.get('touch', None)) == 'touch':
             return render_to_response('touch.html', {'permissions': allow_server})
-        if (request.POST.get('stepResponse', None)) == '查询':
+        if (request.POST.get('stepResponse', None)) == '部署记录':
             return render_to_response('stepResponse.html')
+        if (request.POST.get('sysInfo', None)) == '系统状态':
+            return render_to_response('sysInfo.html', {'permissions': allow_server})
         if (request.POST.get('exit', None)) == '注销':
             return HttpResponseRedirect('/murong/')
 
