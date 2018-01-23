@@ -42,7 +42,6 @@ def queryset_to_list(queryset):
 def login(request):
     error_msg = ''
     user = request.POST.get('user', None)
-
     pwd = request.POST.get('pwd', None)
     if request.method == 'POST':
         if (request.POST.get('sysinfo', None)) == '查看系统状态':
@@ -100,7 +99,6 @@ def deploy(request):
 
 @csrf_exempt
 def stepResponse(request):
-
     reqNum = request.POST.get('reqNum')
     developer = request.POST.get('developer')
     if len(reqNum) == 0:
@@ -112,6 +110,8 @@ def stepResponse(request):
     response = render_to_response('stepCallback.html', {'allres': allCallbackData})
     response.set_cookie('steps', json.dumps(allCallbackData), 3600)
     return response
+
+
 @csrf_exempt
 def stepCallback(request):
     if request.GET.get('back', ''):
@@ -119,7 +119,7 @@ def stepCallback(request):
     if request.GET.get('duplicate', ''):
         allCallbackData = []
         duplicate_list = []
-        stepQueryset_reverse=stepQueryset.reverse()
+        stepQueryset_reverse = stepQueryset.reverse()
         for stepObj in stepQueryset_reverse:
             rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
                        stepObj.serverName, str(stepObj.deployTime).split('.')[0])
@@ -135,10 +135,8 @@ def stepCallback(request):
         orderset = stepQueryset.order_by(order_type)
         allCallbackData = queryset_to_list(orderset)
         response = render_to_response('stepCallback.html', {'allres': allCallbackData})
-
         response.set_cookie('steps', json.dumps(allCallbackData), 3600)
         return response
-
     if request.GET.get('stepout', ''):
         dict_stepout = {}
         allCallbackData = json.loads(request.COOKIES.get('steps', '').encode('utf-8'))
@@ -153,13 +151,13 @@ def stepCallback(request):
         for key in dict_stepout:
             stepout += key + ':================' + dict_stepout[key] + '<br>'
         return HttpResponse(stepout)
+
+
 @csrf_exempt
 def upload(request):
-
-
+    filnal_command = ''
     if request.GET.get('back', ''):
         return render_to_response('deploy.html')
-
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     error_msg = '服务器与包名不匹配'
@@ -178,10 +176,49 @@ def upload(request):
     do_fab = 'fab --roles=%s define:value=%s doWork' % (servername, pack.name)
     do_upload = os.popen(do_fab)
     uouter = do_upload.read().decode('gb18030').encode('utf-8')
+    result = uouter.split('[')
+    if 'action' in uouter:#如果能检测到包中有交易，自动重启服务
+        file_list=[]
+        command_list=[]
+
+        uouter_list=uouter.split('out:')
+        for i in uouter_list:
+            if 'action' in i:
+                i+='<br>'
+                file_list.append(i)
+        for i in file_list:
+            if i[-2] not in command_list:
+                command=i.split('/')[-2]
+                command_list.append(command)
+        for command in command_list:
+            filnal_command += 'ygstart -s ' + command +';'
+        do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, '\''+filnal_command+'\'')
+        do_execute = os.popen(do_fab)
+        eouter = do_execute.read().decode('gb18030').encode('utf-8')
+        log_path = os.path.join('updLog', "exeUpdLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
+        with open(log_path, mode='a') as f:
+            f.write(eouter + '**************operator:' + user)
+        eresult = result + eouter.split('[')
+        bigAutoExe='已自动重启服务' + filnal_command
+        log_info = '本次执行日志已保存至' + log_path
+        if 'succeed' in eresult[-2]:
+            successTag = True
+            models.DeploySteps.objects.create(
+                requestNum='自动重启',
+                developer=user,
+                deployStep=command,
+                extantionStep='自动重启',
+                serverName=servername,
+            )
+        else:
+            successTag = False
+        return render_to_response("resultDeploy.html",
+                                  {'result': eresult, 'user': user, 'log_info': log_info,
+                                   'successTag': successTag,'bigAutoExe':bigAutoExe})
+
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
         f.write(uouter + "**************operator:" + user)
-    result = uouter.split('[')
     log_info = '本次执行日志已保存至' + log_path
     if pack.name in result[-1]:
         successTag = True
@@ -205,7 +242,6 @@ def execute(request):
             err = '请输入需求号！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
         elif servername == 'unknown':
-
             err = '请选择部署目标！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
         elif group_or_single == '':
@@ -235,7 +271,8 @@ def execute(request):
         else:
             successTag = False
         return render_to_response("resultDeploy.html",
-                                  {'result': result, 'user': user, 'log_info': log_info, 'successTag': successTag})
+                                  {'result': result, 'user': user, 'log_info': log_info,
+                                   'successTag': successTag})
 
 
 @csrf_exempt
@@ -305,16 +342,16 @@ def sysInfo(request):
                         ]
     elif info_type == 'process':
         html_type = "resultProcess.html"
-        process = fab_out.split('out:')#使用out:分割字符串形成行列表
-        process = process[2:]#去除前两行无用消息
+        process = fab_out.split('out:')  # 使用out:分割字符串形成行列表
+        process = process[2:]  # 去除前两行无用消息
         for row in process:
-            split_row=row.split()#行分割为列
-            del split_row[-1]#删除最后一列，无用列
-            if len(split_row)>8:#CMD中有空格因此会被分割，当CMD被分割时长度会大于预计的8
-                cmd=''
+            split_row = row.split()  # 行分割为列
+            del split_row[-1]  # 删除最后一列，无用列
+            if len(split_row) > 8:  # CMD中有空格因此会被分割，当CMD被分割时长度会大于预计的8
+                cmd = ''
                 for i in split_row[7:]:
-                    cmd+=i+' '
-                split_row[7]=cmd
+                    cmd += i + ' '
+                split_row[7] = cmd
                 dict_in_list.append(split_row[0:8])
                 continue
             dict_in_list.append(split_row)
