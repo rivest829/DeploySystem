@@ -103,9 +103,9 @@ def stepResponse(request):
     reqNum = request.POST.get('reqNum')
     developer = request.POST.get('developer')
     if len(reqNum) == 0:
-        stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("requestNum")
+        stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("id")
     else:
-        stepQueryset = models.DeploySteps.objects.filter(requestNum__contains=reqNum).order_by("requestNum")
+        stepQueryset = models.DeploySteps.objects.filter(requestNum__contains=reqNum).order_by("id")
     global stepQueryset
     allCallbackData = queryset_to_list(stepQueryset)
     response = render_to_response('stepCallback.html', {'allres': allCallbackData})
@@ -118,7 +118,8 @@ def upload(request):
     if request.GET.get('duplicate', ''):
         allCallbackData = []
         duplicate_list = []
-        for stepObj in stepQueryset:
+        stepQueryset_reverse=stepQueryset.reverse()
+        for stepObj in stepQueryset_reverse:
             rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
                        stepObj.serverName, str(stepObj.deployTime).split('.')[0])
             if rowData[3] in duplicate_list:
