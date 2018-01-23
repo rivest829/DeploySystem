@@ -18,25 +18,40 @@
                     <thead>
                     <tr>
                         <th>
-                            项目
+                            UID
                         </th>
                         <th>
-                            状态
+                            PID
+                        </th>
+                        <th>
+                            PPID
+                        </th>
+                        <th>
+                            C
+                        </th>
+                        <th>
+                            STIME
+                        </th>
+                        <th>
+                            TTY
+                        </th>
+                        <th>
+                            TIME
+                        </th>
+                        <th>
+                            CMD
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for row in  result %}
-                        {% for k,v in  row.items %}
-                            <tr class="info">
+                        <tr class="info">
+                        {% for k in  row %}
                                 <td>
                                     {{ k }}
                                 </td>
-                                <td>
-                                    {{ v }}
-                                </td>
-                            </tr>
                         {% endfor %}
+                        </tr>
                     {% endfor %}
                     </tbody>
                 </table>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render, render_to_response, HttpResponse,HttpResponseRedirect
+from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 import os, time
 from murong import models
@@ -8,9 +8,10 @@ import json
 # 重写
 from datetime import datetime, timedelta, tzinfo
 
-#TODO
-#1、__MACOSX问题
-#2、拖拽上传
+
+# TODO
+# 1、__MACOSX问题
+# 2、拖拽上传
 class GMT8(tzinfo):
     delta = timedelta(hours=8)
 
@@ -34,7 +35,6 @@ def queryset_to_list(queryset):
     return allCallbackData
 
 
-
 # Create your views here.
 # 业务逻辑代码
 
@@ -46,10 +46,10 @@ def login(request):
     pwd = request.POST.get('pwd', None)
     if request.method == 'POST':
         if (request.POST.get('sysinfo', None)) == '查看系统状态':
-            sysinfo=sysInfo('cgdgw')
+            sysinfo = sysInfo('cgdgw')
             return render_to_response('login.html', {'sysinfo': sysinfo})
         if (request.POST.get('register', None)) == '注册':
-            alert='用户注册请联系运维人员'
+            alert = '用户注册请联系运维人员'
             return render_to_response('login.html', {'alert': alert})
         if user == '':
             error_msg = '用户名为空'
@@ -61,7 +61,7 @@ def login(request):
                 return render(request, 'login.html', {'error_msg': error_msg})
             if pwd_in_db == pwd:
                 allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
-                response = render_to_response('upload.html',{'permissions': allow_server})
+                response = render_to_response('upload.html', {'permissions': allow_server})
                 # 将username写入浏览器cookie
                 response.set_cookie('user', user)
                 return response
@@ -149,7 +149,7 @@ def upload(request):
             else:
                 dict_stepout[row[5]] = row[3].replace('\'', '')
         for key in dict_stepout:
-            stepout+=key+':================'+dict_stepout[key]+'<br>'
+            stepout += key + ':================' + dict_stepout[key] + '<br>'
         return HttpResponse(stepout)
 
     if request.GET.get('back', ''):
@@ -192,21 +192,21 @@ def execute(request):
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.POST.has_key('execute'):
         servername = request.POST.get('server')
-        group_or_single=request.POST.get('GorS')
+        group_or_single = request.POST.get('GorS')
         requestNum = request.POST.get('requestNum', '')
-        module_name=request.POST.get('command', '')
+        module_name = request.POST.get('command', '')
         extantionStep = request.POST.get('extantionStep')
         if requestNum == '':
             err = '请输入需求号！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
-        elif servername=='unknown':
+        elif servername == 'unknown':
 
             err = '请选择部署目标！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
-        elif group_or_single=='':
+        elif group_or_single == '':
             err = '请指定ygstart参数！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
-        elif module_name=='':
+        elif module_name == '':
             err = '请输入服务名！'
             return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
         command = '\'ygstart ' + group_or_single + ' ' + module_name + '\''
@@ -279,10 +279,39 @@ def touch(request):
             error_msg = '口令错！'
             return render(request, 'touch.html', {'error_msg': error_msg, 'permissions': allow_server})
 
-def sysInfo(servername):
-    do_fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (
-        servername,servername)
-    sys_info = os.popen(do_fab).read().decode('gb18030').encode('utf-8')
-    result = sys_info.split('[')
-    return render_to_response("resultSysinfo.html",
-                              {'result': result})
+
+@csrf_exempt
+def sysInfo(request):
+    dict_in_list = []
+    servername = request.POST.get('server')
+    info_type = request.POST.get('info_type')
+    do_fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (servername, info_type)
+    fab_out = os.popen(do_fab).read().decode('gb18030').encode('utf-8')
+    if info_type == 'uptime':
+        uptime = fab_out.split('[')[5].split()
+        html_type = "resultSysinfo.html"
+        servername += '系统状态'
+        dict_in_list = [{'服务器当前时间': uptime[2], },
+                        {'服务器运行时间': uptime[4], },
+                        {'当前用户数量': uptime[7], },
+                        {'1分钟内系统平均负载': uptime[11], },
+                        {'5分钟内系统平均负载': uptime[12], },
+                        {'15分钟内系统平均负载': uptime[13], },
+                        ]
+    elif info_type == 'process':
+        html_type = "resultProcess.html"
+        process = fab_out.split('out:')#使用out:分割字符串形成行列表
+        process = process[2:]#去除前两行无用消息
+        for row in process:
+            split_row=row.split()#行分割为列
+            del split_row[-1]#删除最后一列，无用列
+            if len(split_row)>8:#CMD中有空格因此会被分割，当CMD被分割时长度会大于预计的8
+                cmd=''
+                for i in split_row[7:]:
+                    cmd+=i+' '
+                split_row[7]=cmd
+                dict_in_list.append(split_row[0:8])
+                continue
+            dict_in_list.append(split_row)
+        del dict_in_list[-1]
+    return render_to_response(html_type, {'result': dict_in_list, 'servername': servername})

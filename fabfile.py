@@ -65,8 +65,10 @@ def jboss():
 
 @roles()
 def sysInfo():
-    run('uptime')
-
+    if package=='uptime':
+        run('uptime')
+    elif package=='process':
+        run('ps -ef')
 def doWork():
     execute(upload)
     execute(unzip)

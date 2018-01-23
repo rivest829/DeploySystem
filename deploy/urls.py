@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^execute/', views.execute),
     url(r'^dellog/', views.dellog),
     url(r'^touch/', views.touch),
+    url(r'^sysInfo/', views.sysInfo),
     url(r'^stepResponse/', views.stepResponse),
     url(r'^login/', views.login),
 ]
