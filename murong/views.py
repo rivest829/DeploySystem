@@ -180,15 +180,14 @@ def upload(request):
     if 'action' in uouter:#如果能检测到包中有交易，自动重启服务
         file_list=[]
         command_list=[]
-
         uouter_list=uouter.split('out:')
         for i in uouter_list:
             if 'action' in i:
                 i+='<br>'
                 file_list.append(i)
         for i in file_list:
-            if i[-2] not in command_list:
-                command=i.split('/')[-2]
+            command = i.split('/')[-2]
+            if command not in command_list:
                 command_list.append(command)
         for command in command_list:
             filnal_command += 'ygstart -s ' + command +';'
