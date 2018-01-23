@@ -100,6 +100,7 @@ def deploy(request):
 
 @csrf_exempt
 def stepResponse(request):
+
     reqNum = request.POST.get('reqNum')
     developer = request.POST.get('developer')
     if len(reqNum) == 0:
@@ -111,10 +112,10 @@ def stepResponse(request):
     response = render_to_response('stepCallback.html', {'allres': allCallbackData})
     response.set_cookie('steps', json.dumps(allCallbackData), 3600)
     return response
-
-
 @csrf_exempt
-def upload(request):
+def stepCallback(request):
+    if request.GET.get('back', ''):
+        return render_to_response('deploy.html')
     if request.GET.get('duplicate', ''):
         allCallbackData = []
         duplicate_list = []
@@ -152,6 +153,9 @@ def upload(request):
         for key in dict_stepout:
             stepout += key + ':================' + dict_stepout[key] + '<br>'
         return HttpResponse(stepout)
+@csrf_exempt
+def upload(request):
+
 
     if request.GET.get('back', ''):
         return render_to_response('deploy.html')
