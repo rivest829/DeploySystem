@@ -22,6 +22,10 @@ def definedate(log_date):
     date = log_date
     global date
 
+def defineGrepTarget(grepTarget):
+    grep_target = grepTarget
+    global grep_target
+
 @roles()
 def upload():
     put(pack_dir + package)
@@ -54,6 +58,16 @@ def dellog():
         run('rm -rf %s'%date)
 
 @roles()
+def greplog():
+    with cd('/home/%s/trc/%s'%(command,date)):
+        run('grep -rl %s *|xargs ls -lrt'%grep_target)
+
+@roles()
+def catlog():
+    with cd('/home/%s/trc/%s'%(command,date)):
+        run('cat %s'%grep_target)
+
+@roles()
 def touch():
     with cd('/home/%s/jboss5/server/default/deploy/%s.war/WEB-INF'%(command,date)):
         run('touch web.xml')
@@ -73,6 +87,8 @@ def doWork():
     execute(upload)
     execute(unzip)
 
+def doCatlog():
+    execute(catlog)
 
 def doExecute():
     execute(commander)
@@ -82,6 +98,9 @@ def doJboss():
 
 def doDellog():
     execute(dellog)
+
+def doGreplog():
+    execute(greplog)
 
 def doTouch():
     execute(touch)

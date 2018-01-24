@@ -95,6 +95,57 @@ def deploy(request):
             return render_to_response('sysInfo.html', {'permissions': allow_server})
         if (request.POST.get('exit', None)) == '注销':
             return HttpResponseRedirect('/murong/')
+        if (request.POST.get('greplog', None)) == '业务日志':
+            return render_to_response('greplog.html', {'permissions': allow_server, 'date_list': date_list})
+
+
+@csrf_exempt
+def greplog(request):
+    logfile_dict_list = []
+    grepTarget = request.POST.get('grepTarget')
+    servername = request.POST.get('server')
+    log_date = request.POST.get('log_date')
+    if servername == '' or log_date == '':
+        return render_to_response("resultGreplog.html", {"grep_result": logfile_dict_list, 'error_msg': '填入信息不完整'})
+    elif len(grepTarget) < 2:
+        return render_to_response("resultGreplog.html", {"grep_result": logfile_dict_list, 'error_msg': '关键字长度不能小于2'})
+    do_fab = 'fab --roles=%s define:value=%s definedate:log_date=%s defineGrepTarget:grepTarget=%s doGreplog -f fabfile.py' % (
+        servername, servername, log_date, grepTarget)
+    do_dellog = os.popen(do_fab.decode('utf-8').encode('gb18030'))
+    greplog_row_string = do_dellog.read().decode('gb18030').encode('utf-8')
+    greplog_list = greplog_row_string.split('out:')
+    del greplog_list[0:1], greplog_list[-1]
+    if len(greplog_list[0].split()) < 7:
+        return render_to_response("resultGreplog.html", {"grep_result": logfile_dict_list, 'error_msg': '查无此关键字'})
+    elif len(greplog_list) > 10000:
+        return render_to_response("resultGreplog.html", {"grep_result": logfile_dict_list, 'error_msg': '大于一万条，放弃'})
+    for row in greplog_list:
+        logfile = row.split()
+        dict_logfile = {logfile[7]: logfile[8], }
+        logfile_dict_list.append(dict_logfile)
+    response = render_to_response("resultGreplog.html", {"grep_result": logfile_dict_list})
+    response.set_cookie('Log_servername', servername)
+    response.set_cookie('log_date', log_date)
+    return response
+
+
+@csrf_exempt
+def resultGreplog(request):
+    cat_list = []
+    logname = request.GET.get('logname')
+    servername = request.COOKIES.get('Log_servername', '')
+    log_date = request.COOKIES.get('log_date', '')
+    do_fab = 'fab --roles=%s define:value=%s definedate:log_date=%s defineGrepTarget:grepTarget=%s doCatlog -f fabfile.py' % (
+        servername, servername, log_date, logname)
+    do_catlog = os.popen(do_fab)
+    result_catlog = do_catlog.read().decode('gb18030').encode('utf-8')
+    catlog_list = result_catlog.split('out:')
+    del catlog_list[0], catlog_list[-1]
+    for row in catlog_list:
+        row_list = row.split('[')
+        del row_list[-1]
+        cat_list.append(row_list)
+    return render_to_response("resultCatlog.html", {"grep_result": cat_list})
 
 
 @csrf_exempt
@@ -174,10 +225,10 @@ def upload(request):
     do_upload = os.popen(do_fab)
     uouter = do_upload.read().decode('gb18030').encode('utf-8')
     result = uouter.split('[')
-    if '/action/' in uouter:#如果能检测到包中有交易，自动重启服务
-        file_list=[]
-        command_list=[]
-        uouter_list=uouter.split('out:')
+    if '/action/' in uouter:  # 如果能检测到包中有交易，自动重启服务
+        file_list = []
+        command_list = []
+        uouter_list = uouter.split('out:')
         for i in uouter_list:
             if '/action/' in i:
                 file_list.append(i)
@@ -186,15 +237,15 @@ def upload(request):
             if command not in command_list:
                 command_list.append(command)
         for command in command_list:
-            filnal_command += 'ygstart -s ' + command +';'
-        do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, '\''+filnal_command+'\'')
+            filnal_command += 'ygstart -s ' + command + ';'
+        do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, '\'' + filnal_command + '\'')
         do_execute = os.popen(do_fab)
         eouter = do_execute.read().decode('gb18030').encode('utf-8')
         log_path = os.path.join('updLog', "exeUpdLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:
-            f.write(uouter+eouter + '**************operator:' + user)
+            f.write(uouter + eouter + '**************operator:' + user)
         eresult = result + eouter.split('[')
-        bigAutoExe='已自动重启服务' + filnal_command
+        bigAutoExe = '已自动重启服务' + filnal_command
         log_info = '本次执行日志已保存至' + log_path
         if 'succeed' in eresult[-2]:
             successTag = True
@@ -209,7 +260,7 @@ def upload(request):
             successTag = False
         return render_to_response("resultDeploy.html",
                                   {'result': eresult, 'user': user, 'log_info': log_info,
-                                   'successTag': successTag,'bigAutoExe':bigAutoExe})
+                                   'successTag': successTag, 'bigAutoExe': bigAutoExe})
 
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:

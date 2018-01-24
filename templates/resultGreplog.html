@@ -1,0 +1,64 @@
+{# Load the tag library #}
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+{% block page-content %}
+    <body background="/static/newlv.jpg">
+    <div class="container">
+        <br><br><br><br>
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <form action="/resultGreplog/" method="get" role="form">
+                <span><h2 class="text-info">{{ error_msg }}</h2></span>
+                    <table class="table table-condensed table-striped">
+                        <thead>
+                        <tr>
+                            <th>
+                                时间
+                            </th>
+                            <th>
+                                日志名
+                            </th>
+                            <th>
+                                操作
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in  grep_result %}
+                            <tr class="info">
+                                {% for k,v in   row.items %}
+                                    <td>
+                                        {{ k }}
+                                    </td>
+                                    <td>
+                                        {{ v }}
+                                    </td>
+                                    <td>
+                                    <button type="submit" value="{{ v }}" name="logname" class="btn btn-info btn-sm">查看</button>
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+
+            </div>
+            <div class="col-md-12 column">
+                <br>
+                <form action="/upload/" method="get" role="form">
+                    <p style="width: 20%;margin: 0 auto;">
+                        <button type="submit" value="back" name="back" class="btn btn-lg btn-default">回到主页</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

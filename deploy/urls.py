@@ -28,4 +28,6 @@ urlpatterns = [
     url(r'^stepResponse/', views.stepResponse),
     url(r'^stepCallback/', views.stepCallback),
     url(r'^login/', views.login),
+    url(r'^greplog/', views.greplog),
+    url(r'^resultGreplog/', views.resultGreplog),
 ]
