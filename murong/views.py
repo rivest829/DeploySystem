@@ -196,7 +196,7 @@ def upload(request):
         eouter = do_execute.read().decode('gb18030').encode('utf-8')
         log_path = os.path.join('updLog', "exeUpdLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:
-            f.write(eouter + '**************operator:' + user)
+            f.write(uouter+eouter + '**************operator:' + user)
         eresult = result + eouter.split('[')
         bigAutoExe='已自动重启服务' + filnal_command
         log_info = '本次执行日志已保存至' + log_path
