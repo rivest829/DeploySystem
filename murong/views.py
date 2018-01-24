@@ -160,13 +160,10 @@ def upload(request):
         return render_to_response('deploy.html')
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
-    error_msg = '服务器与包名不匹配'
     pack = request.FILES.get('data')
-    servername = request.POST.get('server')
+    servername = pack.name.split('-')[1]
     save_path = os.path.join('pack', pack.name)
-    if servername != pack.name.split('-')[1]:  # 校验包名与服务器名是否匹配
-        return render(request, 'upload.html', {'error_msg': error_msg, 'permissions': allow_server})
-    elif (')' in pack.name):
+    if (')' in pack.name):
         error_msg = '文件名不可包含括号'
         return render(request, 'upload.html', {'error_msg': error_msg, 'permissions': allow_server})
     package = open(save_path, mode="wb")
