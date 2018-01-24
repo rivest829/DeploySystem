@@ -177,13 +177,12 @@ def upload(request):
     do_upload = os.popen(do_fab)
     uouter = do_upload.read().decode('gb18030').encode('utf-8')
     result = uouter.split('[')
-    if 'action' in uouter:#如果能检测到包中有交易，自动重启服务
+    if '/action/' in uouter:#如果能检测到包中有交易，自动重启服务
         file_list=[]
         command_list=[]
         uouter_list=uouter.split('out:')
         for i in uouter_list:
-            if 'action' in i:
-                i+='<br>'
+            if '/action/' in i:
                 file_list.append(i)
         for i in file_list:
             command = i.split('/')[-2]
