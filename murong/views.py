@@ -5,9 +5,11 @@ from django.views.decorators.csrf import csrf_exempt
 import os, time
 from murong import models
 import json
+from django.template import loader
+from pyecharts.constants import DEFAULT_HOST
 # 重写
 from datetime import datetime, timedelta, tzinfo
-
+import build_visual_data
 
 # TODO
 # 1、__MACOSX问题
@@ -59,8 +61,8 @@ def login(request):
                 error_msg = '用户不存在'
                 return render(request, 'login.html', {'error_msg': error_msg})
             if pwd_in_db == pwd:
-                allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
-                response = render_to_response('upload.html', {'permissions': allow_server})
+
+                response = visual_cpu(request)
                 # 将username写入浏览器cookie
                 response.set_cookie('user', user)
                 return response
@@ -98,6 +100,18 @@ def deploy(request):
         if (request.POST.get('greplog', None)) == '业务日志':
             return render_to_response('greplog.html', {'permissions': allow_server, 'date_list': date_list})
 
+@csrf_exempt
+def visual_cpu(request):
+    template = loader.get_template('deploy.html')
+    l3d = build_visual_data.line3d()
+    b3d = build_visual_data.bar3d()
+    l3d_context = dict(
+        l3d_myechart=l3d.render_embed(),
+        b3d_myechart=b3d.render_embed(),
+        host=DEFAULT_HOST,
+        script_list=l3d.get_js_dependencies()+b3d.get_js_dependencies(),
+    )
+    return HttpResponse(template.render(l3d_context, request))
 
 @csrf_exempt
 def greplog(request):
@@ -208,7 +222,7 @@ def stepCallback(request):
 def upload(request):
     filnal_command = ''
     if request.GET.get('back', ''):
-        return render_to_response('deploy.html')
+        return visual_cpu(request)
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     pack = request.FILES.get('data')

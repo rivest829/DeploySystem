@@ -10,45 +10,63 @@
 {% bootstrap_messages %}
 
 {% block page-content %}
-<body background="/static/newlv.jpg">
-<div class="container">
-	<div class="row clearfix">
-		<div class="col-md-12 column">
-            <br> <br> <br> <br>
-            <h3 class="text-center">
-				部署工具
-			</h3>
-             <br> <br> <br> <br>
-            <form class="form-horizontal" role="form" action="/deploy/" method="post" enctype="multipart/form-data">
-                <div class="form-group" >
-					<div class="col-sm-offset-2 col-sm-10">
-                        <input type="submit" value="部署" name="upload" class="btn btn-block btn-lg btn-success"></input> <br>
-                        <input type="submit" value="重启" name="execute" class="btn btn-lg btn-block btn-warning"></input> <br>
-                        <input type="submit" value="部署记录" name="stepResponse" class="btn btn-lg btn-block btn-info"></input> <br>
+    <head>
+        <meta charset="utf-8">
+        <title>ECharts</title>
+        <script src="http://oog4yfyu0.bkt.clouddn.com/echarts.min.js"></script>
+        <script src="http://oog4yfyu0.bkt.clouddn.com/echarts-gl.js"></script>
+        <script type="text/javascript " src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+        <script type="text/javascript " src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+        <script type="text/javascript " src="http://oog4yfyu0.bkt.clouddn.com/wordcloud.js"></script>
+    </head>
+    <body background="/static/newlv.jpg">
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <br> <br> <br> <br>
+                <h3 class="text-center">
+                    部署工具
+                </h3>
+                <br> <br> <br> <br>
+                <form class="form-horizontal" role="form" action="/deploy/" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input type="submit" value="部署" name="upload"
+                                   class="btn btn-block btn-lg btn-success"></input> <br>
+                            <input type="submit" value="重启" name="execute"
+                                   class="btn btn-lg btn-block btn-warning"></input> <br>
+                            <input type="submit" value="部署记录" name="stepResponse"
+                                   class="btn btn-lg btn-block btn-info"></input> <br>
 
-					</div>
-				</div>
-                <br>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="col-md-6 column">
+                    {{ l3d_myechart|safe }}
+                    </div>
+                    <div class="col-md-6 column">
+                    {{ b3d_myechart|safe }}
+                    </div>
+                </form>
+                <br><br><br><br>
+                <p class="text-center text-info">
+                    <em>提示：</em> 使用前请仔细检查包中文件， <strong>严禁擅自修改</strong>
+                    <small></small>
+                </p>
+            </div>
+        </div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <form class="form-horizontal" role="form" action="/deploy/" method="post" enctype="multipart/form-data">
+            <div class="col-sm-offset-1 col-sm-1">
+                <input type="submit" value="dellog" name="dellog"></input>
+                <input type="submit" value="touch" name="touch"></input>
+                <input type="submit" value="cpudata" name="cpudata"></input>
 
-            </form>
-<br>
-			<p class="text-center text-info">
-				 <em>提示：</em> 使用前请仔细检查包中文件， <strong>严禁擅自修改</strong>  <small></small>
-			</p>
-		</div>
-	</div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <form class="form-horizontal" role="form" action="/deploy/" method="post" enctype="multipart/form-data">
-    <div class="col-sm-offset-1 col-sm-1">
-                        <input type="submit" value="dellog" name="dellog" ></input>
-                        <input type="submit" value="touch" name="touch" ></input>
-                        <input type="submit" value="greplog" name="greplog" ></input>
-
-    </div>
+            </div>
 
 
         </form>
-</div>
+    </div>
 
-</body>
+    </body>
 {% endblock %}
