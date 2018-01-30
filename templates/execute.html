@@ -45,8 +45,8 @@
             </p>
             <br><br>
             <p style="width: 20%;margin: 0 auto;">
-                需求/BUG号:<input class="form-control" name="requestNum" type="text"
-                               placeholder="需求/BUG号"></input>
+                需求/BUG号:(选填)<input class="form-control" name="requestNum" type="text"
+                               placeholder=已获取BUG号:{{ requestNum }}></input>
             </p>
             <br>
             <p style="width: 20%;margin: 0 auto;">
@@ -63,7 +63,7 @@
         </form>
 
         <p class="text-center text-info">
-            <em>提示：</em> 谨慎检查目标服务器，避免启错机器 <strong></strong>
+            <em>提示：</em> 可以不用再输入BUG号，自动从最近上传的包名中获取 <strong></strong>
             <small>:-)</small>
         </p>
     </div>

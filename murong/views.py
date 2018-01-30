@@ -11,6 +11,7 @@ from pyecharts.constants import DEFAULT_HOST
 from datetime import datetime, timedelta, tzinfo
 import build_visual_data
 
+
 # TODO
 # 1、__MACOSX问题
 # 2、拖拽上传
@@ -74,6 +75,7 @@ def login(request):
 @csrf_exempt
 def deploy(request):
     user = request.COOKIES.get('user', '')
+    requestNum = request.COOKIES.get('requestNum')
     date_list = []
     date_iter = (i for i in range(1, 32))
     for i in date_iter:
@@ -86,7 +88,7 @@ def deploy(request):
         if (request.POST.get('upload', None)) == '部署':
             return render_to_response('upload.html', {'permissions': allow_server})
         if (request.POST.get('execute', None)) == '重启':
-            return render_to_response('execute.html', {'permissions': allow_server})
+            return render_to_response('execute.html', {'permissions': allow_server, 'requestNum': requestNum})
         if (request.POST.get('dellog', None)) == 'dellog':
             return render_to_response('dellog.html', {'permissions': allow_server, 'date_list': date_list})
         if (request.POST.get('touch', None)) == 'touch':
@@ -100,6 +102,7 @@ def deploy(request):
         if (request.POST.get('greplog', None)) == '业务日志':
             return render_to_response('greplog.html', {'permissions': allow_server, 'date_list': date_list})
 
+
 @csrf_exempt
 def visual_cpu(request):
     template = loader.get_template('deploy.html')
@@ -109,9 +112,10 @@ def visual_cpu(request):
         cpu_myechart=cpu.render_embed(),
         mem_myechart=mem.render_embed(),
         host=DEFAULT_HOST,
-        script_list=cpu.get_js_dependencies()+mem.get_js_dependencies(),
+        script_list=cpu.get_js_dependencies() + mem.get_js_dependencies(),
     )
     return HttpResponse(template.render(context, request))
+
 
 @csrf_exempt
 def greplog(request):
@@ -226,7 +230,9 @@ def upload(request):
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     pack = request.FILES.get('data')
-    servername = pack.name.split('-')[1]
+    split_pack_name = pack.name.split('-')
+    servername = split_pack_name[1]
+    requestNum = split_pack_name[2] + '-' + split_pack_name[3]
     save_path = os.path.join('pack', pack.name)
     if (')' in pack.name):
         error_msg = '文件名不可包含括号'
@@ -264,7 +270,7 @@ def upload(request):
         if 'succeed' in eresult[-2]:
             successTag = True
             models.DeploySteps.objects.create(
-                requestNum='自动重启',
+                requestNum=requestNum,
                 developer=user,
                 deployStep=command,
                 extantionStep='自动重启',
@@ -272,10 +278,11 @@ def upload(request):
             )
         else:
             successTag = False
-        return render_to_response("resultDeploy.html",
-                                  {'result': eresult, 'user': user, 'log_info': log_info,
-                                   'successTag': successTag, 'bigAutoExe': bigAutoExe})
-
+        response = render_to_response("resultDeploy.html",
+                                      {'result': eresult, 'user': user, 'log_info': log_info,
+                                       'successTag': successTag, 'bigAutoExe': bigAutoExe})
+        response.set_cookie('requestNum', json.dumps(requestNum))
+        return response
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
         f.write(uouter + "**************operator:" + user)
@@ -284,32 +291,40 @@ def upload(request):
         successTag = True
     else:
         successTag = False
-    return render_to_response("resultDeploy.html",
-                              {'result': result, 'user': user, 'log_info': log_info, 'successTag': successTag})
+    response = render_to_response("resultDeploy.html",
+                                  {'result': result, 'user': user, 'log_info': log_info, 'successTag': successTag})
+    response.set_cookie('requestNum', json.dumps(requestNum))
+    return response
 
 
 @csrf_exempt
 def execute(request):
     user = request.COOKIES.get('user', '')
+    requestNum = request.COOKIES.get('requestNum', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.POST.has_key('execute'):
         servername = request.POST.get('server')
         group_or_single = request.POST.get('GorS')
-        requestNum = request.POST.get('requestNum', '')
+        if request.POST.get('requestNum'):
+            requestNum = request.POST.get('requestNum')
         module_name = request.POST.get('command', '')
         extantionStep = request.POST.get('extantionStep')
         if requestNum == '':
-            err = '请输入需求号！'
-            return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
+            err = '需求号获取失败，请输入需求号！'
+            return render_to_response('execute.html',
+                                      {'permissions': allow_server, 'err': err, 'requestNum': requestNum})
         elif servername == 'unknown':
             err = '请选择部署目标！'
-            return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
+            return render_to_response('execute.html',
+                                      {'permissions': allow_server, 'err': err, 'requestNum': requestNum})
         elif group_or_single == '':
             err = '请指定ygstart参数！'
-            return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
+            return render_to_response('execute.html',
+                                      {'permissions': allow_server, 'err': err, 'requestNum': requestNum})
         elif module_name == '':
             err = '请输入服务名！'
-            return render_to_response('execute.html', {'permissions': allow_server, 'err': err})
+            return render_to_response('execute.html',
+                                      {'permissions': allow_server, 'err': err, 'requestNum': requestNum})
         command = '\'ygstart ' + group_or_single + ' ' + module_name + '\''
         do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
         do_execute = os.popen(do_fab)
