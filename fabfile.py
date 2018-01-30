@@ -83,6 +83,8 @@ def sysInfo():
         run('uptime')
     elif package=='process':
         run('ps -ef')
+    elif package=='mem':
+        run('free -m')
 def doWork():
     execute(upload)
     execute(unzip)
