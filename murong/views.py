@@ -103,15 +103,15 @@ def deploy(request):
 @csrf_exempt
 def visual_cpu(request):
     template = loader.get_template('deploy.html')
-    l3d = build_visual_data.line3d()
-    b3d = build_visual_data.bar3d()
-    l3d_context = dict(
-        l3d_myechart=l3d.render_embed(),
-        b3d_myechart=b3d.render_embed(),
+    cpu = build_visual_data.cpu()
+    mem = build_visual_data.mem()
+    context = dict(
+        cpu_myechart=cpu.render_embed(),
+        mem_myechart=mem.render_embed(),
         host=DEFAULT_HOST,
-        script_list=l3d.get_js_dependencies()+b3d.get_js_dependencies(),
+        script_list=cpu.get_js_dependencies()+mem.get_js_dependencies(),
     )
-    return HttpResponse(template.render(l3d_context, request))
+    return HttpResponse(template.render(context, request))
 
 @csrf_exempt
 def greplog(request):
