@@ -9,7 +9,7 @@ from django.template import loader
 from pyecharts.constants import DEFAULT_HOST
 # 重写
 from datetime import datetime, timedelta, tzinfo
-import build_visual_data
+
 
 
 # TODO
@@ -105,14 +105,18 @@ def deploy(request):
 
 @csrf_exempt
 def visual_cpu(request):
+    from pyecharts import Timeline
+    import build_visual_data
     template = loader.get_template('deploy.html')
+    timeline=Timeline(is_auto_play=True, timeline_bottom=0)
     cpu = build_visual_data.cpu()
     mem = build_visual_data.mem()
+    timeline.add(cpu,'CPU')
+    timeline.add(mem,'内存')
     context = dict(
-        cpu_myechart=cpu.render_embed(),
-        mem_myechart=mem.render_embed(),
+        visual_sysinfo=timeline.render_embed(),
         host=DEFAULT_HOST,
-        script_list=cpu.get_js_dependencies() + mem.get_js_dependencies(),
+        script_list=timeline.get_js_dependencies(),
     )
     return HttpResponse(template.render(context, request))
 
@@ -300,7 +304,7 @@ def upload(request):
 @csrf_exempt
 def execute(request):
     user = request.COOKIES.get('user', '')
-    requestNum = request.COOKIES.get('requestNum', '')
+    requestNum = request.COOKIES.get('requestNum', '').replace('\"','')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.POST.has_key('execute'):
         servername = request.POST.get('server')

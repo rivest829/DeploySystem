@@ -12,20 +12,19 @@
 <body background="/static/bigbang.jpg">
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
-    <div class="navbar-header">
-        <a class="navbar-brand" >人保金服应用部署系统</a>
-    </div>
-    <div>
-
-        <p class="navbar-text navbar-left"></p>
-        <!--向右对齐-->
-
-        <form class="navbar-form navbar-right" role="form" action="/login/" method="post" enctype="multipart/form-data">
-            <input type="submit" value="注册" name="register" class="btn btn-block btn-success navbar-btn">
-        </form>
-        <p class="navbar-text navbar-right">北京沐融信息科技有限公司</p>
-        <p class="navbar-text navbar-right"><span style="color: red">{{ alert }}</span></p>
-    </div>
+        <div class="navbar-header">
+            <a class="navbar-brand">人保金服应用部署系统</a>
+        </div>
+        <div>
+            <p class="navbar-text navbar-left"></p>
+            <!--向右对齐-->
+            <form class="navbar-form navbar-right" role="form" action="/login/" method="post"
+                  enctype="multipart/form-data">
+                <input type="submit" value="注册" name="register" class="btn btn-block btn-success navbar-btn">
+            </form>
+            <p class="navbar-text navbar-right">北京沐融信息科技有限公司</p>
+            <p class="navbar-text navbar-right"><span style="color: red">{{ alert }}</span></p>
+        </div>
     </div>
 </nav>
 <div class="container">
@@ -43,26 +42,26 @@
                 </div>
                 <div class="panel-body">
 
-<br>
-            <form class="form-horizontal" role="form" method="post">
+                    <br>
+                    <form class="form-horizontal" role="form" method="post">
 
-                <div class="input-group ">
-                    <span class="input-group-addon">用户：</span>
-                    <input class="form-control" id="username" name="user" type="text" placeholder="请输入"/>
-                </div>
-<br>
-                <div class="input-group">
-                    <span class="input-group-addon">密码：</span>
-                    <input class="form-control" id="password" name="pwd" type="password" placeholder="请输入"/>
-                </div>
-<br>
-                <div class="col-md-14 column ">
-                    <button type="submit" class="btn btn-block btn-default btn-default">登录</button>
-                    <span style="color: red">{{ error_msg }}</span>
-                </div>
+                        <div class="input-group ">
+                            <span class="input-group-addon">用户：</span>
+                            <input class="form-control" id="username" name="user" type="text" placeholder="请输入"/>
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <span class="input-group-addon">密码：</span>
+                            <input class="form-control" id="password" name="pwd" type="password" placeholder="请输入"/>
+                        </div>
+                        <br>
+                        <div class="col-md-14 column ">
+                            <button type="submit" class="btn btn-block btn-default btn-default">登录</button>
+                            <span style="color: red">{{ error_msg }}</span>
+                        </div>
 
-            </form>
-                    </div>
+                    </form>
+                </div>
             </div>
             <p class="text-center text-info">
                 <small></small>
