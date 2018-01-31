@@ -167,7 +167,7 @@ def resultGreplog(request):
         row_list = row.split('[')
         del row_list[-1]
         cat_list.append(row_list)
-    return render_to_response("resultCatlog.html", {"grep_result": cat_list})
+    return render_to_response("resultCatlog.html", {"grep_result": cat_list,"log_name":servername+' : '+log_date+'日 : '+logname})
 
 
 @csrf_exempt
@@ -181,7 +181,7 @@ def stepResponse(request):
     global stepQueryset
     allCallbackData = queryset_to_list(stepQueryset)
     response = render_to_response('stepCallback.html', {'allres': allCallbackData})
-    response.set_cookie('steps', json.dumps(allCallbackData), 3600)
+    response.set_cookie('steps', json.dumps(allCallbackData))
     return response
 
 
@@ -276,7 +276,7 @@ def upload(request):
             models.DeploySteps.objects.create(
                 requestNum=requestNum,
                 developer=user,
-                deployStep=command,
+                deployStep=filnal_command,
                 extantionStep='自动重启',
                 serverName=servername,
             )
