@@ -9,86 +9,103 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 {% block page-content %}
-<body>
-<div class="container">
-    <div class="row clearfix">
-    <br> <br> <br> <br>
-        <div class="col-md-12 column">
-            <br>
-            <form action="/stepCallback/" method="get" role="form">
-                <div class="col-md-4 column">
-                    <p style="width: 20%;margin: 0 auto;float:left">
-                        <button type="submit" value="back" name="back" class="btn btn-lg btn-primary">回到主页</button>
+    <body background="/static/bigbang.jpg">
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column " style="padding: 100px 50px 10px;float: none;
+                                                            display: block;
+                                                            margin-left: auto;
+                                                            margin-right: auto;  ">
+                <h3 class="text-center" style="color: white">
+                    人保金服应用部署系统
+                </h3>
+                <form action="/stepCallback/" method="get" role="form">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">部署记录
+                                <p style="float:right">
+                                    <button type="submit" value="duplicate" name="duplicate"
+                                            class="btn btn-sm btn-warning">
+                                        步骤去重
+                                    </button>
+                                    <button type="submit" value="stepout" name="stepout" class="btn btn-sm btn-warning">
+                                        格式化输出
+                                    </button>
+                                </p>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-striped table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <button type="submit" value="id" name="order_type" class="btn btn-sm btn-info">
+                                            id
+                                        </button>
+                                    </th>
+                                    <th>
+                                        <button type="submit" value="developer" name="order_type"
+                                                class="btn btn-sm btn-info">
+                                            开发者
+                                        </button>
+                                    </th>
+                                    <th>
+                                        <button type="submit" value="requestNum" name="order_type"
+                                                class="btn btn-sm btn-info">
+                                            需求号
+                                        </button>
+                                    </th>
+                                    <th>
+                                        <button type="submit" value="deployStep" name="order_type"
+                                                class="btn btn-sm btn-info">
+                                            部署步骤
+                                        </button>
+                                    </th>
+                                    <th>
+                                        <button type="submit" value="extantionStep" name="order_type"
+                                                class="btn btn-sm btn-info">
+                                            额外步骤
+                                        </button>
+                                    </th>
+                                    <th>
+                                        <button type="submit" value="serverName" name="order_type"
+                                                class="btn btn-sm btn-info">
+                                            服务器
+                                        </button>
+                                    </th>
+                                    <th>
+                                        <button type="submit" value="deployTime" name="order_type"
+                                                class="btn btn-sm btn-info">
+                                            执行时间
+                                        </button>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in  allres %}
+                                    <tr class="success">
+                                        {% for coloum in  row %}
+                                            <th>
+                                                {{ coloum }}
+                                            </th>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-12 column">
+                <br>
+                <form action="/upload/" method="get" role="form">
+                    <p style="width: 20%;margin: 0 auto;">
+                        <button type="submit" value="back" name="back" class="btn btn-lg btn-default">回到主页</button>
                     </p>
-                </div>
-                <div class="col-md-4 column">
-                    <p style="width: 20%;margin: 0 auto">
-                        <button type="submit" value="duplicate" name="duplicate" class="btn btn-lg btn-danger">步骤去重
-                        </button>
-                    </p>
-                </div>
-                <div class="col-md-4 column">
-                    <p style="width: 20%;margin: 0 auto;float:right">
-                        <button type="submit" value="stepout" name="stepout" class="btn btn-lg btn-danger">格式化输出
-                        </button>
-                    </p>
-                </div>
-            </form>
-        </div>
-
-        <div class="col-md-12 column">
-            <form action="/stepCallback/" method="get" role="form">
-            <br><br>
-                <table class="table table-striped table-condensed">
-                    <thead>
-                    <tr>
-                        <th>
-                            <button type="submit" value="id" name="order_type" class="btn btn-sm btn-info">id
-                            </button>
-                        </th>
-                        <th>
-                            <button type="submit" value="developer" name="order_type" class="btn btn-sm btn-info">开发者
-                            </button>
-                        </th>
-                        <th>
-                            <button type="submit" value="requestNum" name="order_type" class="btn btn-sm btn-info">需求号
-                            </button>
-                        </th>
-                        <th>
-                            <button type="submit" value="deployStep" name="order_type" class="btn btn-sm btn-info">部署步骤
-                            </button>
-                        </th>
-                        <th>
-                            <button type="submit" value="extantionStep" name="order_type" class="btn btn-sm btn-info">
-                                额外步骤
-                            </button>
-                        </th>
-                        <th>
-                            <button type="submit" value="serverName" name="order_type" class="btn btn-sm btn-info">服务器
-                            </button>
-                        </th>
-                        <th>
-                            <button type="submit" value="deployTime" name="order_type" class="btn btn-sm btn-info">执行时间
-                            </button>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    {% for row in  allres %}
-                        <tr class="success">
-                            {% for coloum in  row %}
-                                <th>
-                                    {{ coloum }}
-                                </th>
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-</body>
+    </body>
 {% endblock %}

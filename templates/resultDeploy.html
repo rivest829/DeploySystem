@@ -9,33 +9,49 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 {% block page-content %}
-<body background="/static/newlv.jpg">
-<div class="container">
-<br> <br> <br> <br>
-    <div class="row clearfix">
-        <div class="col-md-12 column">
-        <span><h2 class="text-info">{{ bigAutoExe }}</h2></span>
-            {% for row in  result %}
-                {{ row }}<br>
-            {% endfor %}
-
+    <body background="/static/bigbang.jpg">
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-10 column " style="padding: 100px 50px 10px;float: none;
+                                                            display: block;
+                                                            margin-left: auto;
+                                                            margin-right: auto;  ">
+                <h3 class="text-center" style="color: white">
+                    人保金服应用部署系统
+                </h3>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">返回结果</h3>
+                    </div>
+                    <div class="panel-body">
+                    </div>
+                    {% if successTag %}
+                        <div class="alert alert-success alert-dismissable">
+                            <span><h2 class="text-info">{{ bigAutoExe }}</h2></span>
+                            {% for row in  result %}
+                                {{ row }}<br>
+                            {% endfor %}
+                            <span><h2 class="text-info">{{ bigAutoExe }}</h2></span>
+                            <h4>
+                                成功
+                            </h4> <strong>Succeed!</strong> 执行人：{{ user }}<br>
+                            <strong>{{ log_info }}</strong>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-dismissable alert-danger">
+                            <span><h2 class="text-info">{{ bigAutoExe }}</h2></span>
+                            {% for row in  result %}
+                                {{ row }}<br>
+                            {% endfor %}
+                            <h4>
+                                失败
+                            </h4> <strong>Failed!</strong> 执行人：{{ user }}<br>
+                            <strong>{{ log_info }}</strong>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        {% if successTag %}
-                <div class="alert alert-success alert-dismissable">
-                <span><h2 class="text-info">{{ bigAutoExe }}</h2></span>
-                    <h4>
-                        成功
-                    </h4> <strong>Succeed!</strong> 执行人：{{ user }}<br>
-                    <strong>{{ log_info }}</strong>
-                </div>
-            {% else %}
-                <div class="alert alert-dismissable alert-danger">
-                    <h4>
-                        失败
-                    </h4> <strong>Failed!</strong> 执行人：{{ user }}<br>
-                    <strong>{{ log_info }}</strong>
-                </div>
-            {% endif %}
         <div class="col-md-12 column">
             <br>
             <form action="/upload/" method="get" role="form">
@@ -45,6 +61,6 @@
             </form>
         </div>
     </div>
-</div>
-</body>
+    </div>
+    </body>
 {% endblock %}

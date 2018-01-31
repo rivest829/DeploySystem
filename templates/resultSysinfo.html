@@ -9,37 +9,49 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 {% block page-content %}
-    <body background="/static/newlv.jpg">
+    <body background="/static/bigbang.jpg">
     <div class="container">
-        <br><br><br><br>
         <div class="row clearfix">
-            <div class="col-md-12 column">
-                <table class="table table-hover table-bordered">
-                    <thead>
-                    <tr>
-                        <th>
-                            项目
-                        </th>
-                        <th>
-                            状态
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for row in  result %}
-                        {% for k,v in  row.items %}
-                            <tr class="info">
-                                <td>
-                                    {{ k }}
-                                </td>
-                                <td>
-                                    {{ v }}
-                                </td>
+            <div class="col-md-10 column " style="padding: 100px 50px 10px;float: none;
+                                                            display: block;
+                                                            margin-left: auto;
+                                                            margin-right: auto;  ">
+                <h3 class="text-center" style="color: white">
+                    人保金服应用部署系统
+                </h3>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">系统状态</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                            <tr>
+                                <th>
+                                    项目
+                                </th>
+                                <th>
+                                    状态
+                                </th>
                             </tr>
-                        {% endfor %}
-                    {% endfor %}
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody>
+                            {% for row in  result %}
+                                {% for k,v in  row.items %}
+                                    <tr class="info">
+                                        <td>
+                                            {{ k }}
+                                        </td>
+                                        <td>
+                                            {{ v }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="col-md-12 column">
                 <br>
@@ -51,4 +63,5 @@
             </div>
         </div>
     </div>
+    </body>
 {% endblock %}

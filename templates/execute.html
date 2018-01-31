@@ -9,72 +9,79 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 {% block page-content %}
-<body background="/static/newlv.jpg">
-<div class="container">
-    <div class="row clearfix">
-    <br> <br> <br> <br>
-        <div class="col-md-12 column">
-            <h3 class="text-center">
-                重启服务
-            </h3>
-        </div>
-        <form action="/execute/" method="post">
-
-            <br><br><br>
-            <br><br>
-            <p style="width: 20%;margin: 0 auto;">
-                <label for="exampleInputFile">目标：</label>
-                <select name="server">
-                    <option value="unknown">请选择</option>
-                    {% for row in  permissions %}
-                        <option value="{{ row }}">{{ row }}</option>
-                    {% endfor %}
-                </select>
-                <br><br><br>
-                <label for="exampleInputFile">执行命令：</label>
-                ygstart
-                <select name="GorS">
-                    <option value="">请选择</option>
-                    <option value="-s">-s</option>
-                    <option value="-g">-g</option>
-                </select>
-            </p>
-            <br>
-            <p style="width: 20%;margin: 0 auto;">
-                <input class="form-control" name="command" type="text" placeholder="服务名"></input>
-            </p>
-            <br><br>
-            <p style="width: 20%;margin: 0 auto;">
-                需求/BUG号:(选填)<input class="form-control" name="requestNum" type="text"
-                               value={{ requestNum }} ></input>
-            </p>
-            <br>
-            <p style="width: 20%;margin: 0 auto;">
-                额外步骤:<input class="form-control" name="extantionStep" type="text" placeholder="选填"></input>
-            </p>
-            <br>
-            <p style="width: 20%;margin: 0 auto;">
-                <button type="submit" value="Execute!" name="execute" class="btn btn-danger">Execute</button><span style="color: red">{{ err }}</span>
-            </p>
-            <div>
-                {#        <input type="submit" value="restartJboss" name="restartJboss"/>#}
+    <body background="/static/bigbang.jpg">
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-10 column " style="padding: 100px 50px 10px;float: none;
+                                                            display: block;
+                                                            margin-left: auto;
+                                                            margin-right: auto;  ">
+                <h3 class="text-center" style="color: white">
+                    人保金服应用部署系统
+                </h3>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">重启服务</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form action="/execute/" method="post">
+                            <br><br>
+                            <p style="width: 25%;margin: 0 auto;">
+                                <label for="exampleInputFile">目标：</label>
+                                <select name="server">
+                                    <option value="unknown">请选择</option>
+                                    {% for row in  permissions %}
+                                        <option value="{{ row }}">{{ row }}</option>
+                                    {% endfor %}
+                                </select>
+                                <br><br>
+                                <label for="exampleInputFile">执行命令：</label>
+                                <br>
+                                ygstart
+                                <select name="GorS">
+                                    <option value="">请选择</option>
+                                    <option value="-s">-s</option>
+                                    <option value="-g">-g</option>
+                                </select>
+                            </p>
+                            <br>
+                            <p style="width: 20%;margin: 0 auto;">
+                                <input class="form-control" name="command" type="text" placeholder="服务名">
+                            </p>
+                            <br>
+                            <p style="width: 20%;margin: 0 auto;">
+                                需求/BUG号:(选填)<input class="form-control" name="requestNum" type="text"
+                                                   value={{ requestNum }}>
+                            </p>
+                            <br>
+                            <p style="width: 20%;margin: 0 auto;">
+                                额外步骤:<input class="form-control" name="extantionStep" type="text"
+                                            placeholder="选填">
+                            </p>
+                            <br>
+                            <p style="width: 20%;margin: 0 auto;">
+                                <button type="submit" value="Execute!" name="execute" class="btn btn-danger">Execute
+                                </button>
+                                <span style="color: red">{{ err }}</span>
+                            </p>
+                            <br><br>
+                            <p class="text-center text-info">
+                                <em>提示：</em> 自动从最近上传的包名中获取BUG号 <strong></strong>
+                                <small>:-)</small>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-12 column">
+                    <br>
+                    <form action="/upload/" method="get" role="form">
+                        <p style="width: 20%;margin: 0 auto;">
+                            <button type="submit" value="back" name="back" class="btn btn-lg btn-default">回到主页</button>
+                        </p>
+                    </form>
+                </div>
             </div>
-
-        </form>
-
-        <p class="text-center text-info">
-            <em>提示：</em> 自动从最近上传的包名中获取BUG号 <strong></strong>
-            <small>:-)</small>
-        </p>
+        </div>
     </div>
-    <div class="col-md-12 column">
-        <br>
-        <form action="/upload/" method="get" role="form">
-            <p style="width: 20%;margin: 0 auto;">
-                <button type="submit" value="back" name="back" class="btn btn-lg btn-default">回到主页</button>
-            </p>
-        </form>
-    </div>
-</div>
-</body>
+    </body>
 {% endblock %}

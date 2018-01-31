@@ -9,74 +9,84 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 {% block page-content %}
-{# Display a form #}
-<body background="/static/newlv.jpg">
-<div class="container">
-<br> <br> <br> <br>
-    <div class="row clearfix">
-        <div class="col-md-12 column">
-            <h3 class="text-center">
-                清理日志
-            </h3>
-            <form action="/dellog/" class="form-horizontal" role="form" method="post">
-                <div class="form-group">
-                    <div class="col-sm-10">
-                        <p style="width: 20%;margin: 0 auto;">
-                            <label for="exampleInputFile">口令：</label>
-                            <input class="form-control" id="password" name="password" type="password" placeholder="口令"/>
+    {# Display a form #}
+    <body background="/static/bigbang.jpg">
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-10 column " style="padding: 100px 50px 10px;float: none;
+                                                            display: block;
+                                                            margin-left: auto;
+                                                            margin-right: auto;  ">
+                <h3 class="text-center" style="color: white">
+                    人保金服应用部署系统
+                </h3>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">清理日志</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form action="/dellog/" class="form-horizontal" role="form" method="post">
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <p style="width: 20%;margin: 0 auto;">
+                                        <label for="exampleInputFile">口令：</label>
+                                        <input class="form-control" id="password" name="password" type="password"
+                                               placeholder="口令"/>
+                                    </p>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <p style="width: 20%;margin: 0 auto;">
+                                        <label for="exampleInputFile">目标：</label>
+                                        <select name="server">
+                                            <option value=""></option>
+                                            {% for row in  permissions %}
+                                                <option value="{{ row }}">{{ row }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </p>
+                                    <br>
+                                    <p style="width: 20%;margin: 0 auto;">
+                                        <label for="exampleInputFile">日志日期：</label>
+                                        <select name="log_date">
+                                            <option value=""></option>
+                                            {% for row in  date_list %}
+                                                <option value="{{ row }}">{{ row }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </p>
+                                    <br>
+                                    <p style="width: 20%;margin: 0 auto;">
+                                        <button type="submit" value="Delete Log!" name="Delete Log!"
+                                                class="btn btn-danger">清理日志
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <span style="color: red">{{ error_msg }}</span>
+                                </div>
+                            </div>
+                        </form>
+                        <p class="text-center text-info">
+                            <em>提示：</em> 隐藏功能——<strong>删除日志，谨慎操作！</strong>
+                            <small></small>
                         </p>
                     </div>
                 </div>
-                <br>
-                <div class="form-group">
-                    <div class="col-sm-10">
+                <div class="col-md-12 column">
+                    <br>
+                    <form action="/upload/" method="get" role="form">
                         <p style="width: 20%;margin: 0 auto;">
-                            <label for="exampleInputFile">目标：</label>
-                            <select name="server">
-                                <option value=""></option>
-                                {% for row in  permissions %}
-                                    <option value="{{ row }}">{{ row }}</option>
-                                {% endfor %}
-                            </select>
+                            <button type="submit" value="back" name="back" class="btn btn-lg btn-default">回到主页</button>
                         </p>
-                        <br>
-                        <p style="width: 20%;margin: 0 auto;">
-                            <label for="exampleInputFile">日志日期：</label>
-                            <select name="log_date">
-                                <option value=""></option>
-                                {% for row in  date_list %}
-                                    <option value="{{ row }}">{{ row }}</option>
-                                {% endfor %}
-                            </select>
-                        </p>
-                        <br>
-                        <p style="width: 20%;margin: 0 auto;">
-                            <button type="submit" value="Delete Log!" name="Delete Log!" class="btn btn-danger">Delete
-                                Log!
-                            </button>
-                        </p>
-                    </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <span style="color: red">{{ error_msg }}</span>
-                    </div>
-                </div>
-            </form>
-            <p class="text-center text-info">
-                <em>提示：</em> 隐藏功能——<strong>删除日志，谨慎操作！</strong>
-                <small></small>
-            </p>
+            </div>
         </div>
-    <div class="col-md-12 column">
-        <br>
-        <form action="/upload/" method="get" role="form">
-            <p style="width: 20%;margin: 0 auto;">
-                <button type="submit" value="back" name="back" class="btn btn-lg btn-default">回到主页</button>
-            </p>
-        </form>
     </div>
-    </div>
-</div>
-</body>
+    </body>
 {% endblock %}

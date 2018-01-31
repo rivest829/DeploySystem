@@ -9,36 +9,43 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 {% block page-content %}
-    <body background="/static/newlv.jpg">
+    <body background="/static/bigbang.jpg">
     <div class="container">
-        <br><br><br><br>
         <div class="row clearfix">
-            <div class="col-md-12 column">
-                <table class="table table-hover table-bordered">
-                    <thead>
-                    <tr>
-                        <th>
-                            结果
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-
-                    {% for k in grep_result %}
-                        <tr class="info">
-                            <td>
-                                {% for v in k %}
-                                    {{ v }}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-
-
-                    </tbody>
-                </table>
-
+            <div class="col-md-10 column " style="padding: 100px 50px 10px;float: none;
+                                                            display: block;
+                                                            margin-left: auto;
+                                                            margin-right: auto;  ">
+                <h3 class="text-center" style="color: white">
+                    人保金服应用部署系统
+                </h3>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">打开日志</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                            <tr>
+                                <th>
+                                    {{ log_name }}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for k in grep_result %}
+                                <tr class="info">
+                                    <td>
+                                        {% for v in k %}
+                                            {{ v }}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="col-md-12 column">
                 <br>
@@ -50,4 +57,5 @@
             </div>
         </div>
     </div>
+    </body>
 {% endblock %}
