@@ -29,7 +29,7 @@
                             <p style="width: 25%;margin: 0 auto;">
                                 <label for="exampleInputFile">目标：</label>
                                 <select name="server">
-                                    <option value="unknown">请选择</option>
+                                    <option value={{ servername }}>{{ servername }}</option>
                                     {% for row in  permissions %}
                                         <option value="{{ row }}">{{ row }}</option>
                                     {% endfor %}

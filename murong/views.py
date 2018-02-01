@@ -75,7 +75,8 @@ def login(request):
 @csrf_exempt
 def deploy(request):
     user = request.COOKIES.get('user', '')
-    requestNum = request.COOKIES.get('requestNum')
+    requestNum = request.COOKIES.get('requestNum','')
+    servername = request.COOKIES.get('servername','')
     date_list = []
     date_iter = (i for i in range(1, 32))
     for i in date_iter:
@@ -88,7 +89,7 @@ def deploy(request):
         if (request.POST.get('upload', None)) == '部署':
             return render_to_response('upload.html', {'permissions': allow_server})
         if (request.POST.get('execute', None)) == '重启':
-            return render_to_response('execute.html', {'permissions': allow_server, 'requestNum': requestNum})
+            return render_to_response('execute.html', {'permissions': allow_server, 'requestNum': requestNum,'servername':servername})
         if (request.POST.get('dellog', None)) == 'dellog':
             return render_to_response('dellog.html', {'permissions': allow_server, 'date_list': date_list})
         if (request.POST.get('touch', None)) == 'touch':
@@ -288,7 +289,8 @@ def upload(request):
         response = render_to_response("resultDeploy.html",
                                       {'result': eresult, 'user': user, 'log_info': log_info,
                                        'successTag': successTag, 'bigAutoExe': bigAutoExe})
-        response.set_cookie('requestNum', json.dumps(requestNum))
+        response.set_cookie('requestNum', requestNum)
+        response.set_cookie('servername', servername)
         return response
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
@@ -300,20 +302,19 @@ def upload(request):
         successTag = False
     response = render_to_response("resultDeploy.html",
                                   {'result': result, 'user': user, 'log_info': log_info, 'successTag': successTag})
-    response.set_cookie('requestNum', json.dumps(requestNum))
+    response.set_cookie('requestNum', requestNum)
+    response.set_cookie('servername', servername)
     return response
 
 
 @csrf_exempt
 def execute(request):
     user = request.COOKIES.get('user', '')
-    requestNum = request.COOKIES.get('requestNum', '').replace('\"','')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.POST.has_key('execute'):
         servername = request.POST.get('server')
         group_or_single = request.POST.get('GorS')
-        if request.POST.get('requestNum'):
-            requestNum = request.POST.get('requestNum')
+        requestNum = request.POST.get('requestNum')
         module_name = request.POST.get('command', '')
         extantionStep = request.POST.get('extantionStep')
         if requestNum == '':
