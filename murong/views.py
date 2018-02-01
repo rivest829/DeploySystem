@@ -269,7 +269,7 @@ def upload(request):
         log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:
             f.write(uouter + '**************operator:' + user)
-        log_path = os.path.join('Log', "exeUpdLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
+        log_path = os.path.join('exeLog', "exeUpdLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
         with open(log_path, mode='a') as f:
             f.write(eouter + '**************operator:' + user)
         eresult = result + eouter.split('[')
