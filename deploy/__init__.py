@@ -1,0 +1,2 @@
+from murong import change_background
+change_background.start_change()
