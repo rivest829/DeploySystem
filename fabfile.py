@@ -85,6 +85,8 @@ def sysInfo():
         run('ps -ef')
     elif package=='mem':
         run('free -m')
+    elif package=='df':
+        run('df -lh')
 def doWork():
     execute(upload)
     execute(unzip)

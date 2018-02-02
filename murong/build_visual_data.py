@@ -1,30 +1,65 @@
 # -*- coding:utf-8 -*-
 # Author Hsinhan Chiang
 from __future__ import unicode_literals
-from pyecharts import Bar
+from pyecharts import Bar,Timeline
+from django.template import loader
+from pyecharts.constants import DEFAULT_HOST
+from django.shortcuts import HttpResponse
 import os
-servername_list=['bpdcap','cgdgw','csdacm','gsdpay','bsdbui']
-cpu_info=[]
-mem_info=[]
-for servername in servername_list:
-    cpu_fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (servername, 'uptime')
-    mem_fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (servername, 'mem')
-    cpu_out=os.popen(cpu_fab).read().decode('gb18030').encode('utf-8').split('[')[5].split()[13]
-    mem_out=os.popen(mem_fab).read().decode('gb18030').encode('utf-8').split('[')[6].split()[4]
-    cpu_info.append(cpu_out)
-    mem_info.append(mem_out)
 
 def cpu():
     attr = ["172.16.1.165", "172.16.1.166","172.16.1.167","172.16.1.170","172.16.1.171"]
-    v1 = cpu_info
+    v1 = build_visual_data('cpu')
     bar = Bar("CPU状态")
-    bar.add("各服务器CPU状态", attr, v1, is_label_show=True,mark_point=["max"],is_random=True)
+    bar.add("", attr, v1, is_label_show=True,mark_point=["max"],is_random=True,yaxis_formatter='‰')
     return bar
 
 def mem():
     attr = ["172.16.1.165", "172.16.1.166", "172.16.1.167", "172.16.1.170", "172.16.1.171"]
-    v1 = mem_info
+    v1 = build_visual_data('mem')
     bar = Bar("内存状态")
-    bar.add("各服务器CPU状态", attr, v1, is_label_show=True,mark_point=["max"],is_random=True)
-    print(mem_info)
+    bar.add("", attr, v1, is_label_show=True,mark_point=["max"],is_random=True,yaxis_formatter='MB')
     return bar
+
+def disk():
+    attr = ["172.16.1.165", "172.16.1.166", "172.16.1.167", "172.16.1.170", "172.16.1.171"]
+    v1 = build_visual_data('disk')
+    bar = Bar("磁盘状态")
+    bar.add("", attr, v1, is_label_show=True,mark_point=["max"],is_random=True,yaxis_formatter='GB')
+    return bar
+
+
+def build_visual_data(info_type):
+    servername_list = ['bpdcap', 'cgdgw', 'csdacm', 'gsdpay', 'bsdbui']
+    info = []
+    for servername in servername_list:
+        if info_type=='cpu':
+            fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (servername, 'uptime')
+            out = os.popen(fab).read().decode('gb18030').encode('utf-8').split('[')[5].split()[13]
+        elif info_type=='mem':
+            fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (servername, 'mem')
+            out = os.popen(fab).read().decode('gb18030').encode('utf-8').split('[')[6].split()[4]
+        elif info_type=='disk':
+            fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (servername, 'df')
+            out = os.popen(fab).read().decode('gb18030').encode('utf-8').split('[')[6].split()[4].replace('G','')
+            diskfile=open('diskout','ab')
+            diskfile.write(out)
+        info.append(out)
+    return info
+
+def visual_data_output(request):
+    template = loader.get_template('deploy.html')
+    timeline = Timeline(is_auto_play=True, timeline_bottom=0)
+    cpudata = cpu()
+    memdata = mem()
+    diskdata = disk()
+    timeline.add(cpudata, 'CPU')
+    timeline.add(memdata, '内存')
+    timeline.add(diskdata, '磁盘')
+    context = dict(
+        visual_sysinfo=timeline.render_embed(),
+        host=DEFAULT_HOST,
+        script_list=timeline.get_js_dependencies(),
+    )
+    return HttpResponse(template.render(context, request))
+

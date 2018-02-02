@@ -4,12 +4,9 @@ from django.shortcuts import render, render_to_response, HttpResponse, HttpRespo
 from django.views.decorators.csrf import csrf_exempt
 import os, time
 from murong import models
-import json
-from django.template import loader
-from pyecharts.constants import DEFAULT_HOST
-# 重写
-from datetime import datetime, timedelta, tzinfo
 
+# 重写
+from datetime import timedelta, tzinfo
 
 
 # TODO
@@ -26,17 +23,6 @@ class GMT8(tzinfo):
 
     def dst(self, dt):
         return self.delta
-
-
-# 代码复用
-def queryset_to_list(queryset):
-    allCallbackData = []
-    for stepObj in queryset:
-        rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
-                   stepObj.serverName, str(stepObj.deployTime).split('.')[0])
-        allCallbackData.append(rowData)
-    return allCallbackData
-
 
 # Create your views here.
 # 业务逻辑代码
@@ -75,8 +61,8 @@ def login(request):
 @csrf_exempt
 def deploy(request):
     user = request.COOKIES.get('user', '')
-    requestNum = request.COOKIES.get('requestNum','')
-    servername = request.COOKIES.get('servername','')
+    requestNum = request.COOKIES.get('requestNum', '')
+    servername = request.COOKIES.get('servername', '')
     date_list = []
     date_iter = (i for i in range(1, 32))
     for i in date_iter:
@@ -89,7 +75,8 @@ def deploy(request):
         if (request.POST.get('upload', None)) == '部署':
             return render_to_response('upload.html', {'permissions': allow_server})
         if (request.POST.get('execute', None)) == '重启':
-            return render_to_response('execute.html', {'permissions': allow_server, 'requestNum': requestNum,'servername':servername})
+            return render_to_response('execute.html',
+                                      {'permissions': allow_server, 'requestNum': requestNum, 'servername': servername})
         if (request.POST.get('dellog', None)) == 'dellog':
             return render_to_response('dellog.html', {'permissions': allow_server, 'date_list': date_list})
         if (request.POST.get('touch', None)) == 'touch':
@@ -106,20 +93,9 @@ def deploy(request):
 
 @csrf_exempt
 def visual_cpu(request):
-    from pyecharts import Timeline
     import build_visual_data
-    template = loader.get_template('deploy.html')
-    timeline=Timeline(is_auto_play=True, timeline_bottom=0)
-    cpu = build_visual_data.cpu()
-    mem = build_visual_data.mem()
-    timeline.add(cpu,'CPU')
-    timeline.add(mem,'内存')
-    context = dict(
-        visual_sysinfo=timeline.render_embed(),
-        host=DEFAULT_HOST,
-        script_list=timeline.get_js_dependencies(),
-    )
-    return HttpResponse(template.render(context, request))
+    return build_visual_data.visual_data_output(request)
+
 
 
 @csrf_exempt
@@ -168,194 +144,32 @@ def resultGreplog(request):
         row_list = row.split('[')
         del row_list[-1]
         cat_list.append(row_list)
-    return render_to_response("resultCatlog.html", {"grep_result": cat_list,"log_name":servername+' : '+log_date+'日 : '+logname})
+    return render_to_response("resultCatlog.html",
+                              {"grep_result": cat_list, "log_name": servername + ' : ' + log_date + '日 : ' + logname})
 
 
 @csrf_exempt
 def stepResponse(request):
-    reqNum = request.POST.get('reqNum')
-    developer = request.POST.get('developer')
-    if len(reqNum) == 0:
-        stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("id")
-    else:
-        stepQueryset = models.DeploySteps.objects.filter(requestNum__contains=reqNum).order_by("id")
-    global stepQueryset
-    allCallbackData = queryset_to_list(stepQueryset)
-    response = render_to_response('stepCallback.html', {'allres': allCallbackData})
-    response.set_cookie('steps', json.dumps(allCallbackData))
-    return response
+    import system_log_finder
+    return system_log_finder.system_log_finder(request)
 
 
 @csrf_exempt
 def stepCallback(request):
-    if request.GET.get('back', ''):
-        return render_to_response('deploy.html')
-    if request.GET.get('duplicate', ''):
-        allCallbackData = []
-        duplicate_list = []
-        stepQueryset_reverse = stepQueryset.reverse()
-        for stepObj in stepQueryset_reverse:
-            rowData = (stepObj.id, stepObj.developer, stepObj.requestNum, stepObj.deployStep, stepObj.extantionStep,
-                       stepObj.serverName, str(stepObj.deployTime).split('.')[0])
-            if rowData[3] in duplicate_list:
-                continue
-            duplicate_list.append(rowData[3])
-            allCallbackData.append(rowData)
-        response = render_to_response('stepCallback.html', {'allres': allCallbackData})
-        response.set_cookie('steps', json.dumps(allCallbackData), 3600)
-        return response
-    if request.GET.get('order_type', ''):
-        order_type = request.GET.get('order_type', '')
-        orderset = stepQueryset.order_by(order_type)
-        allCallbackData = queryset_to_list(orderset)
-        response = render_to_response('stepCallback.html', {'allres': allCallbackData})
-        response.set_cookie('steps', json.dumps(allCallbackData), 3600)
-        return response
-    if request.GET.get('stepout', ''):
-        dict_stepout = {}
-        allCallbackData = json.loads(request.COOKIES.get('steps', '').encode('utf-8'))
-        if allCallbackData == '':
-            allCallbackData = queryset_to_list(stepQueryset)
-        stepout = ''
-        for row in allCallbackData:
-            if row[5] in dict_stepout:
-                dict_stepout[row[5]] += ';' + row[3].replace('\'', '')
-            else:
-                dict_stepout[row[5]] = row[3].replace('\'', '')
-        for key in dict_stepout:
-            stepout += key + ':================' + dict_stepout[key] + '<br>'
-        return HttpResponse(stepout)
+    import system_log_finder
+    return system_log_finder.return_system_log_form(request)
 
 
 @csrf_exempt
 def upload(request):
-    filnal_command = ''
-    if request.GET.get('back', ''):
-        return visual_cpu(request)
-    user = request.COOKIES.get('user', '')
-    allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
-    pack = request.FILES.get('data')
-    split_pack_name = pack.name.split('-')
-    servername = split_pack_name[1]
-    requestNum = split_pack_name[2] + '-' + split_pack_name[3]
-    save_path = os.path.join('pack', pack.name)
-    if (')' in pack.name):
-        error_msg = '文件名不可包含括号'
-        return render(request, 'upload.html', {'error_msg': error_msg, 'permissions': allow_server})
-    package = open(save_path, mode="wb")
-    for item in pack.chunks():
-        package.write(item)
-    package.close()
-    do_fab = 'fab --roles=%s define:value=%s doWork' % (servername, pack.name)
-    do_upload = os.popen(do_fab)
-    uouter = do_upload.read().decode('gb18030').encode('utf-8')
-    result = uouter.split('[')
-    if '/action/' in uouter:  # 如果能检测到包中有交易，自动重启服务
-        file_list = []
-        command_list = []
-        uouter_list = uouter.split('out:')
-        for i in uouter_list:
-            if '/action/' in i:
-                file_list.append(i)
-        for i in file_list:
-            command = i.split('/')[-2]
-            if command not in command_list:
-                command_list.append(command)
-        for command in command_list:
-            filnal_command += 'ygstart -s ' + command + ';'
-        do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, '\'' + filnal_command + '\'')
-        do_execute = os.popen(do_fab)
-        eouter = do_execute.read().decode('gb18030').encode('utf-8')
-        log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
-        with open(log_path, mode='a') as f:
-            f.write(uouter + '**************operator:' + user)
-        log_path = os.path.join('exeLog', "exeUpdLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
-        with open(log_path, mode='a') as f:
-            f.write(eouter + '**************operator:' + user)
-        eresult = result + eouter.split('[')
-        bigAutoExe = '已自动重启服务' + filnal_command
-        log_info = '本次执行日志已保存至' + log_path
-        if 'succeed' in eresult[-2]:
-            successTag = True
-            models.DeploySteps.objects.create(
-                requestNum=requestNum,
-                developer=user,
-                deployStep=filnal_command,
-                extantionStep='自动重启',
-                serverName=servername,
-            )
-        else:
-            successTag = False
-        response = render_to_response("resultDeploy.html",
-                                      {'result': eresult, 'user': user, 'log_info': log_info,
-                                       'successTag': successTag, 'bigAutoExe': bigAutoExe})
-        response.set_cookie('requestNum', requestNum)
-        response.set_cookie('servername', servername)
-        return response
-    log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
-    with open(log_path, mode='a') as f:
-        f.write(uouter + "**************operator:" + user)
-    log_info = '本次执行日志已保存至' + log_path
-    if pack.name in result[-1]:
-        successTag = True
-    else:
-        successTag = False
-    response = render_to_response("resultDeploy.html",
-                                  {'result': result, 'user': user, 'log_info': log_info, 'successTag': successTag})
-    response.set_cookie('requestNum', requestNum)
-    response.set_cookie('servername', servername)
-    return response
+    import upload
+    return upload.upload(request)
 
 
 @csrf_exempt
 def execute(request):
-    user = request.COOKIES.get('user', '')
-    allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
-    if request.POST.has_key('execute'):
-        servername = request.POST.get('server')
-        group_or_single = request.POST.get('GorS')
-        requestNum = request.POST.get('requestNum')
-        module_name = request.POST.get('command', '')
-        extantionStep = request.POST.get('extantionStep')
-        if requestNum == '':
-            err = '需求号获取失败，请输入需求号！'
-            return render_to_response('execute.html',
-                                      {'permissions': allow_server, 'err': err, 'requestNum': requestNum})
-        elif servername == 'unknown':
-            err = '请选择部署目标！'
-            return render_to_response('execute.html',
-                                      {'permissions': allow_server, 'err': err, 'requestNum': requestNum})
-        elif group_or_single == '':
-            err = '请指定ygstart参数！'
-            return render_to_response('execute.html',
-                                      {'permissions': allow_server, 'err': err, 'requestNum': requestNum})
-        elif module_name == '':
-            err = '请输入服务名！'
-            return render_to_response('execute.html',
-                                      {'permissions': allow_server, 'err': err, 'requestNum': requestNum})
-        command = '\'ygstart ' + group_or_single + ' ' + module_name + '\''
-        do_fab = 'fab --roles=%s define:value=%s doExecute -f fabfile.py' % (servername, command)
-        do_execute = os.popen(do_fab)
-        eouter = do_execute.read().decode('gb18030').encode('utf-8')
-        log_path = os.path.join('exeLog', "executeLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
-        with open(log_path, mode='a') as f:
-            f.write(eouter + '**************operator:' + user)
-        result = eouter.split('[')
-        log_info = '本次执行日志已保存至' + log_path
-        if 'succeed' in result[-2]:
-            successTag = True
-            models.DeploySteps.objects.create(
-                requestNum=requestNum,
-                developer=user,
-                deployStep=command,
-                extantionStep=extantionStep,
-                serverName=servername,
-            )
-        else:
-            successTag = False
-        return render_to_response("resultDeploy.html",
-                                  {'result': result, 'user': user, 'log_info': log_info,
-                                   'successTag': successTag})
+    import execute
+    return execute.execute(request)
 
 
 @csrf_exempt
