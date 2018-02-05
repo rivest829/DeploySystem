@@ -83,7 +83,7 @@ def deploy(request):
         if (request.POST.get('touch', None)) == 'touch':
             return render_to_response('touch.html', {'permissions': allow_server})
         if (request.POST.get('stepResponse', None)) == '部署记录':
-            return render_to_response('stepResponse.html')
+            return render_to_response('stepResponse.html',{'user':user,'requestNum':requestNum})
         if (request.POST.get('sysInfo', None)) == '系统状态':
             return render_to_response('sysInfo.html', {'permissions': allow_server})
         if (request.POST.get('exit', None)) == '注销':
