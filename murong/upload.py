@@ -6,8 +6,6 @@ import os, time
 
 
 def upload(request):
-    if request.GET.get('back', ''):
-        return visual_cpu(request)
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     pack = request.FILES.get('data')

@@ -56,6 +56,8 @@ def login(request):
 
 @csrf_exempt
 def deploy(request):
+    if request.GET.get('back', ''):
+        return visual_cpu(request)
     user = request.COOKIES.get('user', '')
     requestNum = request.COOKIES.get('requestNum', '')
     servername = request.COOKIES.get('servername', '')
