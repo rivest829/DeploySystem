@@ -13,14 +13,17 @@ def queryset_to_list(queryset):
     return allCallbackData
 
 def system_log_finder(request):
-    reqNum = request.POST.get('reqNum')
-    developer = request.POST.get('developer')
-    if len(reqNum) == 0:
-        stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("id")
+    if request.POST.get('all_log')=='查询所有':
+        stepQueryset = models.DeploySteps.objects.all().order_by('id')
     else:
-        stepQueryset = models.DeploySteps.objects.filter(requestNum__contains=reqNum).order_by("id")
+        reqNum = request.POST.get('reqNum')
+        developer = request.POST.get('developer')
+        if len(reqNum) == 0:
+            stepQueryset = models.DeploySteps.objects.filter(developer=developer).order_by("id")
+        else:
+            stepQueryset = models.DeploySteps.objects.filter(requestNum__contains=reqNum).order_by("id")
     global stepQueryset
-    allCallbackData = queryset_to_list(stepQueryset)
+    allCallbackData = queryset_to_list(stepQueryset.reverse())
     response = render_to_response('stepCallback.html', {'allres': allCallbackData})
     response.set_cookie('steps', json.dumps(allCallbackData))
     return response
