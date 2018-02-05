@@ -24,6 +24,7 @@ class GMT8(tzinfo):
     def dst(self, dt):
         return self.delta
 
+
 # Create your views here.
 # 业务逻辑代码
 
@@ -97,7 +98,6 @@ def visual_cpu(request):
     return build_visual_data.visual_data_output(request)
 
 
-
 @csrf_exempt
 def greplog(request):
     logfile_dict_list = []
@@ -163,6 +163,12 @@ def stepCallback(request):
 @csrf_exempt
 def upload(request):
     import upload
+    if request.GET.get('autorestart', ''):
+        user = request.COOKIES.get('user', '')
+        requestNum = request.COOKIES.get('requestNum', '')
+        servername = request.COOKIES.get('servername', '')
+        filnal_command = request.COOKIES.get('filnal_command', '')
+        return upload.autorestart(requestNum, servername, filnal_command, user)
     return upload.upload(request)
 
 
