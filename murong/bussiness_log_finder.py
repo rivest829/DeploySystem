@@ -23,7 +23,10 @@ def greplog(request):
         return render_to_response("resultGreplog.html", {"grep_result": logfile_dict_list, 'error_msg': '大于一万条，放弃'})
     for row in greplog_list:
         logfile = row.split()
-        dict_logfile = {logfile[7]: logfile[8], }
+        try:
+            dict_logfile = {logfile[7]: logfile[8], }
+        except IndexError as e:
+            return render_to_response("resultGreplog.html", {"grep_result": logfile_dict_list, 'error_msg': str(e)+'，可能是该日日志已被清空'})
         logfile_dict_list.append(dict_logfile)
     response = render_to_response("resultGreplog.html", {"grep_result": logfile_dict_list})
     response.set_cookie('Log_servername', servername)
