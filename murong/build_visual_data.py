@@ -5,7 +5,7 @@ from pyecharts import Bar,Timeline
 from django.template import loader
 from pyecharts.constants import DEFAULT_HOST
 from django.shortcuts import HttpResponse
-import os
+import os,json,time,threading
 
 def cpu():
     attr = ["172.16.1.165", "172.16.1.166","172.16.1.167","172.16.1.170","172.16.1.171"]
@@ -49,6 +49,12 @@ def build_visual_data(info_type):
 
 def visual_data_output(request):
     template = loader.get_template('deploy.html')
+    with open('temp_json_info','rb') as temp_file:
+        context_json=temp_file.read().decode()
+        context=json.loads(context_json)
+    return HttpResponse(template.render(context, request))
+
+def flush_visual_data():
     timeline = Timeline(is_auto_play=True, timeline_bottom=0)
     cpudata = cpu()
     memdata = mem()
@@ -61,5 +67,12 @@ def visual_data_output(request):
         host=DEFAULT_HOST,
         script_list=timeline.get_js_dependencies(),
     )
-    return HttpResponse(template.render(context, request))
+    context_json = json.dumps(context)
+    with open('temp_json_info','wb') as temp_file:
+        temp_file.write(context_json)
+    time.sleep(600)
 
+def start_flush_visual_data():
+    t=threading.Thread(target=flush_visual_data)
+    t.setDaemon(True)
+    t.start()

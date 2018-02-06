@@ -1,2 +1,3 @@
-from murong import change_background
+from murong import change_background,build_visual_data
 change_background.start_change()
+build_visual_data.start_flush_visual_data()
