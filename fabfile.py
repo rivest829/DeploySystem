@@ -33,7 +33,13 @@ def upload():
 
 @roles()
 def unzip():
-    run('unzip -o ' + package + ' -d ../')
+    package_env=package.split('-')[1]
+    if package_env =='base':
+        run('unzip -o ' + package )
+        run('cp -r base/* .')
+        run('rm -r base')
+    else:
+        run('unzip -o ' + package + ' -d ../')
     flag = zipfile.ZipFile(pack_dir + package)
     for item in flag.namelist():
         tag = item.split('.')[0]
