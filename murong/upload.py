@@ -6,13 +6,14 @@ import os, time
 
 
 def upload(request):
+    uouter=''
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     pack = request.FILES.get('data')
     split_pack_name = pack.name.split('-')
     servername = split_pack_name[1]
     if servername not in allow_server:
-        error_msg = '你没有'+servername+'的权限'
+        error_msg = '你没有' + servername + '的权限'
         return render(request, 'upload.html', {'error_msg': error_msg})
     elif (')' in pack.name):
         error_msg = '文件名不可包含括号'
@@ -23,15 +24,22 @@ def upload(request):
     for item in pack.chunks():
         package.write(item)
     package.close()
-    do_fab = 'fab --roles=%s define:value=%s doWork' % (servername, pack.name)
-    do_upload = os.popen(do_fab)
-    uouter = do_upload.read().decode('gb18030').encode('utf-8')
+    if servername == 'base':
+        for i in ('bpdcap', 'bpdmbs', 'bpdposp', 'cgdgw', 'cgdpom', 'cgdweb', 'cgdifc', 'csdacm', 'csdact', 'csdbpg',
+                  'csdmkm', 'gsdadt', 'gsdpay', 'gsdcrs', 'gsdpsm', 'bsdbat', 'bsdbui', 'bsdrpt'):
+            do_fab = 'fab --roles=%s define:value=%s doBaseDeploy' % (i, pack.name)
+            do_upload = os.popen(do_fab)
+            uouter += do_upload.read().decode('gb18030').encode('utf-8')
+    else:
+        do_fab = 'fab --roles=%s define:value=%s doWork' % (servername, pack.name)
+        do_upload = os.popen(do_fab)
+        uouter = do_upload.read().decode('gb18030').encode('utf-8')
     result = uouter.split('[')
     log_path = os.path.join('updLog', "uploadLog-" + time.strftime("%Y%m%d-%H%M", time.localtime()) + ".txt")
     with open(log_path, mode='a') as f:
         f.write(uouter + "**************operator:" + user)
     log_info = '本次执行日志已保存至' + log_path
-    if pack.name in result[-1]:
+    if pack.name in result[-1] or 'base' in result[-1]:
         successTag = True
     else:
         successTag = False

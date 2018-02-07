@@ -4,7 +4,7 @@
 # Example:
 
 from fabric.api import *
-import zipfile,pickle
+import zipfile,pickle,time,sys
 
 # Global Args
 pack_dir = './pack/'
@@ -33,13 +33,7 @@ def upload():
 
 @roles()
 def unzip():
-    package_env=package.split('-')[1]
-    if package_env =='base':
-        run('unzip -o ' + package )
-        run('cp -r base/* .')
-        run('rm -r base')
-    else:
-        run('unzip -o ' + package + ' -d ../')
+    run('unzip -o ' + package + ' -d ../')
     flag = zipfile.ZipFile(pack_dir + package)
     for item in flag.namelist():
         tag = item.split('.')[0]
@@ -53,6 +47,11 @@ def unzip():
             pass
     run('rm -f ' + package)
 
+@roles()
+def all_unzip():
+        run('unzip -o ' + package)
+        run('cp -r base/* .')
+        run('rm -r base')
 
 @roles()
 def commander():
@@ -96,6 +95,10 @@ def sysInfo():
 def doWork():
     execute(upload)
     execute(unzip)
+
+def doBaseDeploy():
+    execute(upload)
+    execute(all_unzip)
 
 def doCatlog():
     execute(catlog)
