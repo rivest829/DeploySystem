@@ -11,11 +11,14 @@ def upload(request):
     pack = request.FILES.get('data')
     split_pack_name = pack.name.split('-')
     servername = split_pack_name[1]
+    if servername not in allow_server:
+        error_msg = '你没有'+servername+'的权限'
+        return render(request, 'upload.html', {'error_msg': error_msg})
+    elif (')' in pack.name):
+        error_msg = '文件名不可包含括号'
+        return render(request, 'upload.html', {'error_msg': error_msg})
     requestNum = split_pack_name[2] + '-' + split_pack_name[3]
     save_path = os.path.join('pack', pack.name)
-    if (')' in pack.name):
-        error_msg = '文件名不可包含括号'
-        return render(request, 'upload.html', {'error_msg': error_msg, 'permissions': allow_server})
     package = open(save_path, mode="wb")
     for item in pack.chunks():
         package.write(item)
