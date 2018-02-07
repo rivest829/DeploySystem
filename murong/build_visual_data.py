@@ -55,22 +55,23 @@ def visual_data_output(request):
     return HttpResponse(template.render(context, request))
 
 def flush_visual_data():
-    timeline = Timeline(is_auto_play=True, timeline_bottom=0)
-    cpudata = cpu()
-    memdata = mem()
-    diskdata = disk()
-    timeline.add(cpudata, 'CPU')
-    timeline.add(memdata, '内存')
-    timeline.add(diskdata, '磁盘')
-    context = dict(
-        visual_sysinfo=timeline.render_embed(),
-        host=DEFAULT_HOST,
-        script_list=timeline.get_js_dependencies(),
-    )
-    context_json = json.dumps(context)
-    with open('temp_json_info','wb') as temp_file:
-        temp_file.write(context_json)
-    time.sleep(600)
+    while True:
+        timeline = Timeline(is_auto_play=True, timeline_bottom=0)
+        cpudata = cpu()
+        memdata = mem()
+        diskdata = disk()
+        timeline.add(cpudata, 'CPU')
+        timeline.add(memdata, '内存')
+        timeline.add(diskdata, '磁盘')
+        context = dict(
+            visual_sysinfo=timeline.render_embed(),
+            host=DEFAULT_HOST,
+            script_list=timeline.get_js_dependencies(),
+        )
+        context_json = json.dumps(context)
+        with open('temp_json_info','wb') as temp_file:
+            temp_file.write(context_json)
+        time.sleep(600)
 
 def start_flush_visual_data():
     t=threading.Thread(target=flush_visual_data)
