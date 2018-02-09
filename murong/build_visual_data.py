@@ -6,23 +6,20 @@ from django.template import loader
 from pyecharts.constants import DEFAULT_HOST
 from django.shortcuts import HttpResponse
 import os,json,time,threading
-
-def cpu():
-    attr = ["172.16.1.165", "172.16.1.166","172.16.1.167","172.16.1.170","172.16.1.171"]
+attr = ["集中代收付|综合金融", "网关金融|门户","账户|会计|金服|营销","支付|清结算","运营|报表"]
+def cpu(attr):
     v1 = build_visual_data('cpu')
     bar = Bar("CPU状态")
     bar.add("", attr, v1, is_label_show=True,mark_point=["max"],is_random=True,yaxis_formatter='‰')
     return bar
 
-def mem():
-    attr = ["172.16.1.165", "172.16.1.166", "172.16.1.167", "172.16.1.170", "172.16.1.171"]
+def mem(attr):
     v1 = build_visual_data('mem')
     bar = Bar("内存状态")
     bar.add("", attr, v1, is_label_show=True,mark_point=["max"],is_random=True,yaxis_formatter='MB')
     return bar
 
-def disk():
-    attr = ["172.16.1.165", "172.16.1.166", "172.16.1.167", "172.16.1.170", "172.16.1.171"]
+def disk(attr):
     v1 = build_visual_data('disk')
     bar = Bar("磁盘状态")
     bar.add("", attr, v1, is_label_show=True,mark_point=["max"],is_random=True,yaxis_formatter='GB')
@@ -42,8 +39,6 @@ def build_visual_data(info_type):
         elif info_type=='disk':
             fab = 'fab --roles=%s define:value=%s doSysInfo -f fabfile.py' % (servername, 'df')
             out = os.popen(fab).read().decode('gb18030').encode('utf-8').split('[')[6].split()[4].replace('G','')
-            diskfile=open('diskout','ab')
-            diskfile.write(out)
         info.append(out)
     return info
 
@@ -57,9 +52,9 @@ def visual_data_output(request):
 def flush_visual_data():
     while True:
         timeline = Timeline(is_auto_play=True, timeline_bottom=0)
-        cpudata = cpu()
-        memdata = mem()
-        diskdata = disk()
+        cpudata = cpu(attr)
+        memdata = mem(attr)
+        diskdata = disk(attr)
         timeline.add(cpudata, 'CPU')
         timeline.add(memdata, '内存')
         timeline.add(diskdata, '磁盘')
