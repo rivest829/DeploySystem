@@ -1,11 +1,4 @@
-{# Load the tag library #}
 {% extends 'base.html' %}
-{% load bootstrap3 %}
-{# Load CSS and JavaScript #}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
-{# Display django.contrib.messages as Bootstrap alerts #}
-{% bootstrap_messages %}
 {% block page-content %}
     <head>
         <script src="http://oog4yfyu0.bkt.clouddn.com/echarts.min.js"></script>
@@ -14,7 +7,6 @@
         <script type="text/javascript " src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
         <script type="text/javascript " src="http://oog4yfyu0.bkt.clouddn.com/wordcloud.js"></script>
     </head>
-    <body background="/static/bigbang.jpg">
     <div class="container">
         <div class="row clearfix">
             <div class="col-md-10 column " style="padding: 100px 50px 10px;float: none;
