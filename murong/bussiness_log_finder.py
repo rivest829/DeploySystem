@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 import os
 def greplog(request):
     logfile_dict_list = []
-    grepTarget = request.POST.get('grepTarget')
+    grepTarget = request.POST.get('grepTarget').strip()
     servername = request.POST.get('server')
     log_date = request.POST.get('log_date')
     if servername == '' or log_date == '':
