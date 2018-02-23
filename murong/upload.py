@@ -80,10 +80,10 @@ def autorestart(requestNum, servername, filnal_command, user):
     with open(log_path, mode='a') as f:
         f.write(eouter + '**************operator:' + user)
     eresult = eouter.split('[')
-    bigAutoExe = '已重启服务' + filnal_command
     log_info = '本次执行日志已保存至' + log_path
     if 'succeed' in eresult[-2]:
         successTag = True
+        bigAutoExe = '已重启服务' + filnal_command
         models.DeploySteps.objects.create(
             requestNum=requestNum,
             developer=user,
@@ -92,6 +92,7 @@ def autorestart(requestNum, servername, filnal_command, user):
             serverName=servername,
         )
     else:
+        bigAutoExe = '服务重启失败：' + filnal_command
         successTag = False
     response = render_to_response("resultDeploy.html",
                                   {'result': eresult, 'user': user, 'log_info': log_info,
