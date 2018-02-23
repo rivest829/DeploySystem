@@ -22,6 +22,10 @@
                   enctype="multipart/form-data">
                 <input type="submit" value="注册" name="register" class="btn btn-block btn-success navbar-btn">
             </form>
+            <form class="navbar-form navbar-right" role="form" action="/login/" method="post"
+                  enctype="multipart/form-data">
+                <input type="submit" value="后台" name="administrator" class="btn btn-block btn-success navbar-btn" href="http://http://172.16.1.169:9527/admin/">
+            </form>
             <p class="navbar-text navbar-right">北京沐融信息科技有限公司</p>
             <p class="navbar-text navbar-right"><span style="color: red">{{ alert }}</span></p>
         </div>

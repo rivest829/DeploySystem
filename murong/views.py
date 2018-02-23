@@ -35,6 +35,8 @@ def login(request):
         if (request.POST.get('register', None)) == '注册':
             alert = '用户注册请联系运维人员'
             return render_to_response('login.html', {'alert': alert})
+        if (request.POST.get('administrator', None)) == '后台':
+            return HttpResponseRedirect('/admin')
         if user == '':
             error_msg = '用户名为空'
         else:
