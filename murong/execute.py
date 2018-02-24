@@ -42,7 +42,7 @@ def execute(request):
             models.DeploySteps.objects.create(
                 requestNum=requestNum,
                 developer=user,
-                deployStep=command,
+                deployStep=command.replace('\'',''),
                 extantionStep=extantionStep,
                 serverName=servername,
             )
