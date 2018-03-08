@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 # Author Hsinhan Chiang
-from views import visual_cpu, models
+from views import models
 from django.shortcuts import render, render_to_response
 import os, time
 
@@ -53,7 +53,7 @@ def upload(request):
                 file_list.append(i)
         for i in file_list:
             command = i.split('/')[-2]
-            if command not in command_list:
+            if command not in command_list and command!='action':
                 command_list.append(command)
         for command in command_list:
             filnal_command += 'ygstart -s ' + command + ';'
