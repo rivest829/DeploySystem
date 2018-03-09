@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render, render_to_response, HttpResponseRedirect
+from django.shortcuts import render, render_to_response, HttpResponseRedirect,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-import os, time
 from murong import models
 from datetime import timedelta, tzinfo
 
@@ -22,6 +21,20 @@ class GMT8(tzinfo):
 
 # Create your views here.
 # 业务逻辑代码
+@csrf_exempt
+def backend_login(request):
+    error_msg = ''
+    user = request.POST.get('user', None)
+    pwd = request.POST.get('pwd', None)
+    if request.method == 'POST':
+        if (request.POST.get('back_to_index', None)) == '返回主页':
+            return HttpResponseRedirect('/murong')
+        if user == 'admin'and  pwd =='admin@picc':
+            import backend
+            return backend.show_user(request)
+        else:
+            error_msg = '用户名密码错误'
+    return render(request, 'backendlogin.html', {'error_msg': error_msg})
 
 @csrf_exempt
 def login(request):
@@ -29,14 +42,11 @@ def login(request):
     user = request.POST.get('user', None)
     pwd = request.POST.get('pwd', None)
     if request.method == 'POST':
-        if (request.POST.get('sysinfo', None)) == '查看系统状态':
-            sysinfo = sysInfo('cgdgw')
-            return render_to_response('login.html', {'sysinfo': sysinfo})
         if (request.POST.get('register', None)) == '注册':
             alert = '用户注册请联系运维人员'
             return render_to_response('login.html', {'alert': alert})
         if (request.POST.get('administrator', None)) == '后台':
-            return HttpResponseRedirect('/admin')
+            return HttpResponseRedirect('/backendlogin')
         if user == '':
             error_msg = '用户名为空'
         else:
@@ -46,7 +56,6 @@ def login(request):
                 error_msg = '用户不存在'
                 return render(request, 'login.html', {'error_msg': error_msg})
             if pwd_in_db == pwd:
-
                 response = visual_cpu(request)
                 # 将username写入浏览器cookie
                 response.set_cookie('user', user)
@@ -90,6 +99,27 @@ def deploy(request):
         if (request.POST.get('greplog', None)) == '业务日志':
             return render_to_response('greplog.html', {'permissions': allow_server, 'date_list': date_list})
 
+@csrf_exempt
+def backend(request):
+    import backend
+    del_user=request.GET.get('del_user','delll').split('_')
+    if (request.GET.get('adduser', None)) == 'adduser':
+        return render(request,'add_user.html')
+    elif (request.GET.get('flush', None)) == 'flush':
+        return backend.show_user(request)
+    elif del_user[0] == 'del':
+        return backend.del_user(request,del_user[1])
+    return backend.return_user_permisson(request)
+
+@csrf_exempt
+def add_user(request):
+    import backend
+    return backend.add_user(request)
+
+@csrf_exempt
+def set_user_permission(request):
+    import backend
+    return backend.set_user_permission(request)
 
 @csrf_exempt
 def visual_cpu(request):

@@ -29,5 +29,10 @@ urlpatterns = [
     url(r'^stepCallback/', views.stepCallback),
     url(r'^login/', views.login),
     url(r'^greplog/', views.greplog),
+    url(r'^backendlogin/', views.backend_login),
     url(r'^resultGreplog/', views.resultGreplog),
+    url(r'^backendadmin/', views.backend),
+    url(r'^backend/', views.backend),
+    url(r'^add_user/', views.add_user),
+    url(r'^set_user_permission/', views.set_user_permission),
 ]

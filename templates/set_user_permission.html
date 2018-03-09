@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block page-content %}
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-10 column " style="padding: 100px 50px 10px;float: none;
+                                                            display: block;
+                                                            margin-left: auto;
+                                                            margin-right: auto;  ">
+                <h3 class="text-center" style="color: white">
+                    人保金服应用部署系统
+                </h3>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">用户权限修改</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form action="/set_user_permission/" class="form-horizontal" role="form" method="post">
+                            <p style="width: 25%;margin: 0 auto;">
+                                用户名：{{ username }}
+                            </p>
+                            <span name="username" value={{ username }}></span>
+                            <br>
+                            <p style="width: 25%;margin: 0 auto;">
+                                权限列表（以空格分割）：<textarea name="permissions">{{ permissions }}</textarea>
+                            </p>
+                            <br>
+                            <p style="width: 25%;margin: 0 auto;">
+                                <button type="" value="setpermissions" name="setpermissions" class="btn btn-danger">修改
+                                </button>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}
