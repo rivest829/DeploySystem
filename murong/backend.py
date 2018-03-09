@@ -23,8 +23,10 @@ def set_user_permission(request):
     return HttpResponse('修改成功：<br>用户名：'+username+'<br>权限列表：'+permisson)
 
 def del_user(request,username):
-    user=models.UserInfo.objects.get(username=username)
+
+    user=models.UserInfo.objects.filter(username=username).all()
     user.delete()
+
     return show_user(request)
 
 def add_user(request):
