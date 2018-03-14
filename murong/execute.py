@@ -4,6 +4,7 @@ import os,time
 from views import models
 from django.shortcuts import render_to_response
 def execute(request):
+    current_hour=int(time.strftime("%H", time.localtime()))
     user = request.COOKIES.get('user', '')
     allow_server = models.UserInfo.objects.filter(username=user).get().Permissions.split(' ')
     if request.POST.has_key('execute'):
@@ -48,6 +49,8 @@ def execute(request):
             )
         else:
             successTag = False
+        if current_hour<7:
+            log_info='现在是%s点，go home and have a rest'
         return render_to_response("resultDeploy.html",
                                   {'result': result, 'user': user, 'log_info': log_info,
                                    'successTag': successTag})
