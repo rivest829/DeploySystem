@@ -25,7 +25,7 @@ def system_log_finder(request):
     global stepQueryset
     allCallbackData = queryset_to_list(stepQueryset.reverse())
     response = render_to_response('stepCallback.html', {'allres': allCallbackData})
-    response.set_cookie('steps', json.dumps(allCallbackData))
+    request.session['steps'] = json.dumps(allCallbackData)
     return response
 
 def return_system_log_form(request):
@@ -42,19 +42,19 @@ def return_system_log_form(request):
                 continue
             duplicate_list.append(rowData[3])
             allCallbackData.append(rowData)
+        request.session['steps'] = json.dumps(allCallbackData)
         response = render_to_response('stepCallback.html', {'allres': allCallbackData})
-        response.set_cookie('steps', json.dumps(allCallbackData), 3600)
         return response
     if request.GET.get('order_type', ''):
         order_type = request.GET.get('order_type', '')
         orderset = stepQueryset.order_by(order_type)
         allCallbackData = queryset_to_list(orderset)
+        request.session['steps'] = json.dumps(allCallbackData)
         response = render_to_response('stepCallback.html', {'allres': allCallbackData})
-        response.set_cookie('steps', json.dumps(allCallbackData), 3600)
         return response
     if request.GET.get('stepout', ''):
         dict_stepout = {}
-        allCallbackData = json.loads(request.COOKIES.get('steps', '').encode('utf-8'))
+        allCallbackData = json.loads(request.session.get('steps'))
         if allCallbackData == '':
             allCallbackData = queryset_to_list(stepQueryset)
         stepout = ''
